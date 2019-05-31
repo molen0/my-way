@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>乡村医生学分管理</h1>
+    <small>学分列表</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <select name="semesterId" class="form-control" id="semesterId">
+                    <label class="checkbox-inline" th:each="mode:${queryPama}">
+                        <option th:selected="${#strings.equals(mode.status, 1)}" th:value="${mode.id}" th:text="${mode.name}"></option>
+                    </label>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+            <div class=" col-sm-2">
+                <a href="#" id="out" class="btn btn-primary" >导出</a>
+            </div>
+        </div>
+    </div>
+    <table id="doctorGrid"></table>
+</section>
+<div th:include="footer">
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#doctorGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {
+                    title: "序号",
+                    field: "id",
+                    align:"center",
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    title: "地区",
+                    field: "name",
+                    align:"center"
+                },
+                {
+                    title: "报名人数",
+                    field: "countAll",
+                    align:"center"
+                },
+                {
+                    title: "得5分人数",
+                    align:"center",
+                    field: "count5",
+                },
+                {
+                    title: "得5分人数占比",
+                    field: "percent5",
+                    align:"center"
+                },
+                {
+                    title: "得3-4.5分人数",
+                    field: "count3",
+                    align:"center"
+                },
+                {
+                    title: "得3-4.5分人数占比",
+                    field: "percent3",
+                    align:"center"
+                },
+                {
+                    title: "得0.5-2.5分人数",
+                    field: "count1",
+                    align:"center"
+                },
+                {
+                    title: "得0.5-2.5分人数占比",
+                    field: "percent1",
+                    align:"center"
+                },
+                {
+                    title: "无学分人数",
+                    field: "count0",
+                    align:"center"
+                },
+                {
+                    title: "无学分人数占比",
+                    field: "percent0",
+                    align:"center"
+                }
+            ],
+            url : basePath+'/api/report/ruralList',
+            queryParams: function(params){
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res)
+                return {
+                    rows :  res.result.pageInfo,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : false,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : false,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    $("#search").click(function (){
+        $('#doctorGrid').bootstrapTable('refresh',null);
+    });
+    $("#out").click(function (){
+        window.location.href=basePath+"/api/report/checkOut?id="+$("#semesterId").val()+"&property=0";
+    });
+</script>
+</body>
+
+</html>

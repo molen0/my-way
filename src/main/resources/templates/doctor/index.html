@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>在线报名管理</h1>
+    <small>医生列表</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-8 col-md-offset-2">
+            <div class="col-sm-3">
+                <input type="text"  name="name" id="name"  class="form-control"  placeholder="请输入姓名" maxlength="8"/>
+            </div>
+            <div class="col-sm-3">
+                <input type="text"  name="phone" id="phone"  class="form-control"  placeholder="请输入手机号" maxlength="12"/>
+            </div>
+            <div class="col-sm-4">
+                <input type="text"  name="company" id="company"  class="form-control"  placeholder="请输入医疗机构" maxlength="20"/>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="doctorGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#doctorGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {
+                    title: "序号",
+                    field: "id",
+                    align:"center",
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    title: "姓名",
+                    field: "name",
+                    align:"center"
+                },
+                {
+                    title: "手机号",
+                    field: "phone",
+                    align:"center"
+                },
+                {
+                    title: "医生属性",
+                    align:"center",
+                    field: "property",
+                    formatter :getProperty
+                },
+                {
+                    title: "医生职称",
+                    field: "title",
+                    align:"center"
+                },
+                {
+                    title: "所属医疗机构",
+                    field: "company",
+                    align:"center"
+                },
+                {
+                    title: "所属区",
+                    field: "areaName",
+                    align:"center"
+                },
+                {
+                    title: "邮箱",
+                    field: "email",
+                    align:"center"
+                },
+                {
+                    title: "操作",
+                    field: "operate",
+                    align: 'center',
+                    events: operateEvents,
+                    align:"center",
+                    formatter: operateFormatter
+                }
+            ],
+            url : basePath+'/api/doctor/list',
+            queryParams: function(params){
+                params['name']=$("#name").val();
+                params['phone']=$("#phone").val();
+                params['company']=$("#company").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res.result.pageInfo.totalElements)
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    function getProperty   (value,row,index) {
+        return value==0 ? "乡村医生" : "全科医生";
+    }
+    $("#search").click(function (){
+        $('#doctorGrid').bootstrapTable('refresh',null);
+    });
+
+    function operateFormatter(value, row, index) {
+//        return [
+//            '<a href="'+basePath+'/console/admin/from?uid='+row.uid+'" >',
+//             '<i class="glyphicon glyphicon-edit"></i>修改',
+//             '</a>  ',
+//            '<a class="remove" href="javascript:void(0);">',
+//            '<i class="glyphicon glyphicon-remove"></i>删除',
+//            '</a>'
+//        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            layer.msg('暂不支持删除')
+        }
+    };
+</script>
+</body>
+
+</html>

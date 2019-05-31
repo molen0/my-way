@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>各区域医生学分统计</h1>
+    <small>列表管理</small>
+</section>
+
+<!--<div id="toolbar">-->
+    <!--<a th:href="@{/api/reportDoctor/from}" class="btn btn-primary" >添加资源</a>-->
+<!--</div>-->
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-12  col-xs-offset-0">
+
+            <div class="col-sm-2  col-xs-offset-0 ">
+                <input type="text"  name="name" class="form-control" id="name"  placeholder="姓名" />
+            </div>
+            <div class="col-sm-3 col-xs-offset-0 ">
+                <select name="sdId" class="form-control" id="sdType">
+                    <option value="">请选择学期</option>
+                </select>
+            </div>
+                <div class="col-sm-3 col-xs-offset-0 ">
+                     <select name="area" class="form-control" id="areaType">
+                        <option value="">请选择地区</option>
+                    </select>
+                </div>
+
+
+                <div class="col-sm-3 col-xs-offset-0">
+                 <select name="credit" class="form-control" id="creditType">
+                        <option value="">请选择学分</option>
+                        <option value="0">0</option>
+                        <option value="0.5">0.5</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="3.5">3.5</option>
+                        <option value="4">4</option>
+                        <option value="4.5">4.5</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+
+
+            <div class=" col-sm-2 col-xs-offset-1  ">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+
+        </div>
+        <div class=" col-sm-10">
+            <a href="#" id="out" class="btn btn-primary" >导出</a>
+        </div>
+
+    </div>
+    <table id="dataGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns: [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "手机号", field: "phone"},
+                {title: "医生属性", field: "property",formatter:getProperty},
+                {title: "职称", field: "title"},
+                //{title: "PDF预览", field: "show", align: 'center', events: showEvents  ,formatter: show},
+                {title: "年龄", field: "age",formatter:getAge},
+                 {title: "所属区", field: "areaName"},
+//                {title: "启用状态", field: "enable", formatter : tableModel.getState},
+                {title: "姓名", field: "name"},
+                {title: "性别", field: "gender",formatter:getGender},
+                {title: "单位", field: "company"},
+                {title: "学分", field: "credit"},
+                {title: "邮箱", field: "email"},
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime"},
+//                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url: basePath+'/api/reportDoctor/list',
+            queryParams: function(params){
+                    params['name']=$("#name").val();
+                params['credit']=$("#creditType").val();
+                params['area']=$("#areaType").val();
+                params['sdId']=$("#sdType").val();
+                    console.log(params['name']);
+                    return params;
+
+            },
+            responseHandler : function (res) {
+
+                console.log(res.result.pageInfo)
+                return {
+                    rows :res.result.pageInfo.datas,
+                    total : res.result.pageInfo.totalCount
+            }
+            },
+
+            search : false,
+            searchOnEnterKey : true,
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [1, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+
+
+    function del(id){
+        //debugger;
+        layer.confirm('确定删除吗?', function(){
+            $.getJSON(basePath+'/api/reportDoctor/delete', {ids:id}, function(ret){
+                if (ret.status){
+                    layer.msg(ret.msg, {icon: 1});
+                    $('#dataGrid').bootstrapTable('refresh',null)
+                } else {
+                    layer.msg(ret.msg, {icon: 2});
+                }
+            });
+        });
+    }
+    function getProperty   (value,row,index) {
+        if(1==value){
+            return "全科医生";
+        }else if(0==value){
+            return "乡村医生";
+        }else{
+            return "--";
+        }
+    }
+    function getGender  (value,row,index) {
+        if(1==value){
+            return "男";
+        }else if(0==value){
+            return "女";
+        }else{
+            return "--";
+        }
+    }
+    function getAge (value,row,index) {
+        if (null !=value){
+            return value;
+        }
+            return "--";
+
+    }
+    function download(id){
+        //debugger;
+        layer.confirm('确定下载吗?', function(){
+            $.getJSON(basePath+'/api/reportDoctor/download', {ids:id}, function(ret){
+                if (ret.status){
+                    layer.msg(ret.msg, {icon: 1});
+                    $('#dataGrid').bootstrapTable('refresh',null)
+                } else {
+                    layer.msg(ret.msg, {icon: 2});
+                }
+            });
+        });
+    }
+    //格式化日期
+    function getdate(date) {
+        var now = new Date(date),
+            y = now.getFullYear(),
+            m = now.getMonth() + 1,
+            d = now.getDate();
+        return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+    }
+
+
+    function getType(value, row, index){
+        return value==1 ? "考试" : "学习";
+    }
+
+
+    window.operateEvents = {
+
+        'click .remove' : function (e, value, row, index) {
+            //debugger;
+            del(row.id)
+        },
+
+    };
+
+    $(function(){
+      var area = $("#areaType").val();
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/reportDoctor/getArea",
+            dataType: "json",
+            success: function(data){
+                var html = "";
+                var list = data.result;
+                for(var i=0;i<list.length;i++){
+                    if(area ==list[i].areaCode){
+
+                        html += '<option value="'+list[i].areaCode+'" selected="true">'+list[i].areaName+'</option>';
+                    }else{
+                        html += '<option value="'+list[i].areaCode+'">'+list[i].areaName+'</option>';
+                    }
+
+                }
+                $("#areaType").append(html);
+            }
+        });
+    });
+
+    $(function(){
+
+       var sdId = $("#sdType").val();
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/reportDoctor/getSemester",
+            dataType: "json",
+            success: function(data){
+                var html = "";
+                var list = data.result.list;
+                var semesterId=data.result.semesterId;
+                debugger;
+                for(var i=0;i<list.length;i++){
+
+                    if ( null !=sdId&& "" != sdId &&undefined !=sdId){
+                        if(sdId ==list[i].id){
+                            html += '<option value="'+list[i].id+'" selected="true">'+list[i].name+'</option>';
+                        }else {
+                            html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                        }
+                    }else {
+                        if(semesterId ==list[i].id){
+                            html += '<option value="'+list[i].id+'" selected="true">'+list[i].name+'</option>';
+                        }else {
+                            html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                        }
+                    }
+                }
+
+                $("#sdType").append(html);
+            }
+        });
+    });
+
+    $("#out").click(function (){
+        //debugger;
+      var  area = $("#areaType").val() ;
+        var credit = $("#creditType").val();
+        var name = $("#name").val();
+        var sdId = $("#sdType").val();
+        window.location.href=basePath+'/api/reportDoctor/putOut?area='+area+'&credit='+credit+'&name='+name+'&sdId='+sdId+'';
+    });
+</script>
+</body>
+</html>
+

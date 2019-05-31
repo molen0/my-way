@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>须知管理</h1>
+    <small>列表管理</small>
+</section>
+<section class="content table-content">
+    <table id="dataGrid"></table>
+</section>
+<!--<div id="toolbar">-->
+<!--<a href="/api/studyExamNeeds/from" class="btn btn-primary" >添加须知</a>-->
+<!--</div>-->
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns: [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "标题名", field: "title"},
+                // {title: "图片地址", field: "photoUrl"},
+                //  {title: "文本框", field: "textArea"},
+                {title: "类型", field: "type", formatter : getType},
+                {title: "课程类型", field: "status", formatter : getStatus},
+                //  {title: "图片地址", field: "photoUrl"},
+                // {title: "启用状态", field: "enable", formatter : tableModel.getState},
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime"},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url: basePath+'/api/studyExamNeeds/list',
+            queryParams: function(params){
+                return params;
+            },
+            responseHandler : function (res) {
+                return {
+                    rows : res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+                }
+            },
+            sortName : 'createdAt',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            toolbar : "#toolbar",
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    function getType(value, row, index){
+        return value==1 ? "考试" : "学习";
+    }
+    function getStatus(value, row, index){
+        return value==1 ? "必学课程" : "知识学习";
+    }
+    function operateFormatter(value, row, index) {
+        return [
+//            '<a class="grant" href="javascript:void(0);" >',
+//            '<i class="glyphicon glyphicon-edit"></i>授权',
+//            '</a>  ',
+            '<a href="'+basePath+'/api/studyExamNeeds/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+//            '<a class="remove" href="javascript:void(0);">',
+//            '<i class="glyphicon glyphicon-remove"></i>删除',
+//            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/studyExamNeeds/delete', 'id');
+        },
+        'click .grant' : function (e, value, row, index) {
+            layer.open({
+                type: 2,
+                title: '角色授权',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['500px', '600px'],
+                content: basePath+'/console/role/grant/?roleId=' + row.roleId
+            });
+        }
+    };
+
+</script>
+</body>
+</html>
+
+

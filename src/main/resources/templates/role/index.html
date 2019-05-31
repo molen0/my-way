@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>角色管理</h1>
+    <small>列表管理</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <input type="text"  name="roleName" class="form-control" id="roleName"  placeholder="请输入用户名" />
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="dataGrid"></table>
+</section>
+<div id="toolbar">
+    <a th:href="@{/api/role/from}" class="btn btn-primary" >添加角色</a>
+</div>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns: [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "角色名称", field: "roleName"},
+                {title: "角色描述", field: "roleDesc"},
+                {title: "启用状态", field: "enable", formatter : tableModel.getState},
+                {title: "创建时间", field: "createdAt", formatter : getStringDateformat},
+                {title: "更新日期", field: "updatedAt", formatter : getStringDateformat},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url: basePath+'/api/role/list',
+            queryParams: function(params){
+                console.log(params);
+                params['roleName']=$("#roleName").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                return {
+                    rows : res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+                }
+            },
+            sortName : 'createdAt',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20,  30, 40],
+            toolbar : "#toolbar",
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+    function operateFormatter(value, row, index) {
+        return [
+            '<a class="grant" href="javascript:void(0);" >',
+            '<i class="glyphicon glyphicon-edit"></i>授权',
+            '</a>  ',
+            '<a href="'+basePath+'/api/role/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+    function getStringDateformat(value, row, index){
+        if(null != value){
+            return value.substring(0,19);
+        }else{
+            return "--";
+        }
+    }
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/role/delete', 'id');
+        },
+        'click .grant' : function (e, value, row, index) {
+            layer.open({
+                type: 2,
+                title: '角色授权',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['500px', '600px'],
+                content: basePath+'/api/role/grant/?id=' + row.id
+            });
+        }
+    };
+
+</script>
+</body>
+</html>
+

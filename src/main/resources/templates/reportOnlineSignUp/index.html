@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>报名统计</h1>
+    <small>报名统计列表</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <select name="semesterId" class="form-control" id="semesterId">
+                    <label class="checkbox-inline" th:each="mode:${queryPama}">
+                        <option th:selected="${#strings.equals(mode.status, 1)}" th:value="${mode.id}" th:text="${mode.name}"></option>
+                    </label>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select name="courseAttr" id="courseAttr" class="form-control" >
+                    <option  value="1" >全科医生</option>
+                    <option  value="0" >乡村医生</option>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+            <div class=" col-sm-2">
+                <a href="#" id="out" class="btn btn-primary" >导出</a>
+            </div>
+        </div>
+    </div>
+    <table id="doctorGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#doctorGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {
+                    title: "序号",
+                    field: "id",
+                    align:"center",
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    title: "地区",
+                    field: "areaName",
+                    align:"center"
+                },
+                {
+                    title: "在编总人数",
+                    field: "inCount",
+                    align:"center"
+                },
+                {
+                    title: "报名人数",
+                    field: "signUpCount",
+                    align:"center"
+                },
+                {
+                    title: "学习人数",
+                    align:"center",
+                    field: "learnCount",
+                },
+                {
+                    title: "考试人数",
+                    align:"center",
+                    field: "studyCount",
+                },
+                {
+                    title: "培训率",
+                    field: "percentLearnCount",
+                    align:"center"
+                },
+                {
+                    title: "考试率",
+                    field: "percentStudyCount",
+                    align:"center"
+                },
+                {
+                    title: "完成全部讲座人数",
+                    field: "courseCount",
+                    align:"center"
+                },
+                {
+                    title: "全部课程完成率",
+                    field: "percentCourseCount",
+                    align:"center"
+                }
+            ],
+            url : basePath+'/api/reportOnlineSignUp/list',
+            queryParams: function(params){
+                params['semesterId']=$("#semesterId").val();
+                params['courseAttr']=$("#courseAttr").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res)
+                return {
+                    rows :  res.result.pageInfo,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : false,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : false,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    $("#search").click(function (){
+        $('#doctorGrid').bootstrapTable('refresh',null);
+    });
+    $("#out").click(function (){
+        window.location.href=basePath+"/api/reportOnlineSignUp/checkOut?id="+$("#semesterId").val()+"&property="+$("#courseAttr").val();
+    });
+</script>
+</body>
+
+</html>

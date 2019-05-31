@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+
+<section class="content-header">
+    <h1>评价统计</h1>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <select onchange="doTypeChange(this);" name="type" id="type" class="form-control" >
+                    <option value="0" >视频印象</option>
+                    <option value="1" >期待课程</option>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <a id="out" class="btn btn-primary" >导出</a>
+            </div>
+        </div>
+    </div>
+    <table class="table table-bordered" id="dataGrid">
+        <tr id="headTr">
+        </tr>
+        <tr id="bodyTr">
+        </tr>
+    </table>
+</section>
+<div th:include="footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function(){
+        $(".table").treegrid({
+            expanderExpandedClass: 'glyphicon glyphicon-minus',
+            expanderCollapsedClass: 'glyphicon glyphicon-plus'
+        });
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/report/getData",
+            dataType: "json",
+            success: function(data){
+               console.log(data);
+                var headHtml = "";
+                var bodyHtml = "";
+                var list = data.result.list;
+                if(list != null && list.length>0){
+                    for(var i=0;i<list.length;i++){
+                        headHtml += "<th>"+list[i].content+"</th>";
+                        bodyHtml += "<th>"+list[i].nums+"</th>";
+                    }
+                }else{
+
+                }
+                $("#headTr").append(headHtml);
+                $("#bodyTr").append(bodyHtml);
+            }
+        });
+    });
+    function doTypeChange(obj){
+        var value = $("#type option:selected").val();
+        $("#headTr").html("");
+        $("#bodyTr").html("");
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/report/getData",
+            dataType: "json",
+            data:{"type":value},
+            success: function(data){
+                console.log(data);
+                var headHtml = "";
+                var bodyHtml = "";
+
+                var list = data.result.list;
+                if(list != null && list.length>0){
+                    for(var i=0;i<list.length;i++){
+                        headHtml += "<th>"+list[i].content+"</th>";
+                        bodyHtml += "<th>"+list[i].nums+"</th>";
+                    }
+                }else{
+
+                }
+                $("#headTr").append(headHtml);
+                $("#bodyTr").append(bodyHtml);
+            }
+        });
+    }
+
+    //导出
+    $("#out").click(function (){
+        var value = $("#type option:selected").val();
+        window.location.href=basePath+"/api/report/checkOutEvaluate?type="+value;
+        //window.location.href=basePath+"/api/report/checkOut?id="+$("#semesterId").val()+"&property=1";
+    });
+</script>
+</body>
+</html>

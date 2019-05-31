@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="''+${'详情'}"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" >
+                        <input type="hidden" name="id" id="id" th:value="${courseEvaluate.id}" />
+                       <!-- <input type="hidden" name="courseId" id="courseId" th:value="${courseEvaluate.courseId}" />-->
+
+                      <div class="form-group">
+                        <label for="courseName" class="col-sm-2 control-label">课程</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="courseName" class="form-control" id="courseName" readonly="true" th:value="${courseName}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="courseType" class="col-sm-2 control-label">课程类型</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="courseType" class="form-control" id="courseType"  readonly="true" th:value="${courseType}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doctorName" class="col-sm-2 control-label">医生</label>
+                        <div class="col-sm-10">                                                  <!--  #strings.isEmpty(doctor.name)?'hidden':''-->
+                            <input type="text" name="doctorName" class="form-control" id="doctorName" readonly="true" th:value="${doctorName}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="impression" class="col-sm-2 control-label">对视频的印象</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="impression" class="form-control" id="impression" readonly="true" th:value="${courseEvaluate.impression}" />
+                        </div>
+                    </div>
+
+                        <div class="form-group">
+                            <label for="expectCourse" class="col-sm-2 control-label">期待上的课程</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="expectCourse" class="form-control" id="expectCourse" readonly="true" th:value="${courseEvaluate.expectCourse}" />
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+</body>
+</html>

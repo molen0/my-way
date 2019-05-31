@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>学分管理</h1>
+    <small>列表管理</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-9 col-md-offset-3">
+            <div class="col-sm-3">
+                <input type="text"  name="doctorName" id="doctorName"  class="form-control"  placeholder="医生名称"/>
+            </div>
+            <div class="col-sm-3">
+                <input type="text"  name="semesterName" id="semesterName"  class="form-control"  placeholder="学期名称"/>
+            </div>
+            <div class="col-sm-3">
+                <input type="text"  name="doctorCompany" id="doctorCompany"  class="form-control"  placeholder="医生单位"/>
+            </div>
+            <div class=" col-sm-1">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="dataGrid"></table>
+</section>
+<div id="toolbar">
+    <!--<a href="#" id="add" class="btn btn-primary">添加考试课程</a>-->
+</div>
+<div th:include="footer"></div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "医生名称", field: "doctor.name" },
+                {title: "职称", field: "doctor.title"},
+                {title: "医生属性", field: "doctor.property" , formatter :courseAttrfor},
+                {title: "所属医疗机构", field: "doctor.company" },
+                {title: "电话", field: "doctor.phone" },
+                {title: "邮箱", field: "doctor.email"},
+                {title: "学期", field: "semester.name"},
+                {title: "学期得分", field: "semesterCredit"},
+                {title: "操作", field: "operate", align: 'center',  formatter: operateFormatter1}
+            ],
+            url : basePath+'/api/credit/list',
+            queryParams: function(params){
+                params['doctorName']=$("#doctorName").val();
+                params['semesterName']=$("#semesterName").val();
+                params['doctorCompany']=$("#doctorCompany").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res);
+                return {
+                    rows : res.result.pageInfo.datas,
+                    total : res.result.pageInfo.totalCount
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createdAt',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20,  50, 100],
+            toolbar : "#toolbar",
+            showRefresh : true,
+            detailView : true, //是否显示父子表
+            showToggle : true,
+            //注册加载子表的事件。注意下这里的三个参数！
+            onExpandRow : function (index, row, $detail) {
+                var userId = row.doctor.id;
+                var semesterId = row.semester.id;
+                var prjLogBookProblemTable = $detail.html('<table></table>').find('table');
+                $(prjLogBookProblemTable).bootstrapTable({
+                    columns : [
+                         {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                          return index+1;
+                        }},
+                        {title: "课程名称", field: "examin.course.title" },
+                        {title: "课程类型", field: "examin.course.courseType", formatter :courseTypefor},
+                        {title: "正确数", field: "right"},
+                        {title: "错误数", field: "error"},
+                        {title: "学分", field: "credit"},
+                    ],
+                    url : basePath+'/api/credit/examinUserList',
+                    method : 'get', //请求方式(*)
+                    sortable : false, //是否启用排序
+                    uniqueId : "id", //每一行的唯一标识，一般为主键列
+                    sidePagination : 'server',
+                    queryParams: { userId: userId ,semesterId:semesterId},
+                    ajaxOptions: { userId: userId, semesterId:semesterId},
+                    //detailView : true, //是否显示父子表
+                    responseHandler : function (res) {
+                        console.log(res.result.pageInfo);
+                        return {
+                            rows : res.result.pageInfo
+                        }
+                    },
+                });
+            }
+
+        });
+    }
+    function courseAttrfor(value,row,index) {
+        switch (value ){
+            case 0 :
+                return "乡村医生";
+            case 1 :
+                return "全科医生";
+        }
+    }
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+    $("#email").click(function () {
+        layer.open({
+            type: 2,
+            title: '邮件发送',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['500px', '600px'],
+            content: basePath+'/api/credit/emailfrom'
+//            end:function(){
+//                $('#dataGrid').bootstrapTable('refresh',null)
+//            }
+        });
+    });
+    function courseTypefor(value,row,index) {
+        switch (value ){
+            case 1 :
+                return "必学课程";
+            case 2 :
+                return "知识学习";
+            case 3 :
+                return "经验分享";
+        }
+    }
+    function statusfor(value,row,index) {
+        switch (row.examin.course.courseType ){
+            case 1 :
+                return value;
+            default  :
+                return "--";
+        }
+    }
+    function creditfor(value,row,index) {
+        if(row.examin.course.courseType == 1){
+            if(value != null && value != 'null'){
+                return value;
+            }else {
+                return "未发放";
+            }
+        }else{
+            return "";
+        }
+    }
+    function operateFormatter1(value, row, index) {
+        var dat = 0;
+        if(row.examin.course.courseType == 1 && row.credit>=0.5){
+                dat =1;
+            }
+        return [
+            '<a href="'+basePath+'/api/credit/from?userId='+row.doctor.id+'&semesterId='+row.semester.id+'" >',
+            '<i class="glyphicon glyphicon-plus"></i>邮件推送',
+            '</a>  '
+        ].join('');
+    }
+
+</script>
+</html>

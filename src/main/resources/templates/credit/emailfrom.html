@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="邮件发送"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" th:attr="action=@{/api/credit/emailBooksave}" method="post">
+                        <input type="hidden" name="semesterId" th:value="${emailBook.semester.id}" />
+                        <input type="hidden" name="id" th:value="${emailBook.id}" />
+                        <div class="form-group">
+                            <label for="tittle" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="tittle" required="true" class="form-control" id="tittle"  th:value="${emailBook.tittle}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="content" class="col-sm-2 control-label">内容</label>
+                            <div class="col-sm-10">
+                                <textarea  name="content"  class="form-control" id="content" th:text="${emailBook.content}"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="sendDate" class="col-sm-2 control-label">发送时间</label>
+                            <div class="col-sm-10">
+                                <input type="text"  readonly="readonly" name="sendDate"  class="form-control" id="sendDate" th:value="${emailBook.semester.time}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="handBookUrl" class="col-sm-2 control-label">电子手册</label>
+                            <div class="col-sm-10">
+                                <input type="text"  readonly="readonly" name="handBookUrl"  class="form-control" id="handBookUrl" th:value="${emailBook.semester.handBookUrl}"/>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label  class="col-sm-2 control-label">附件</label>-->
+                            <!--<div class="col-sm-10">-->
+                                <!--<label th:class="${mail.dat==0 }?'hidden checkbox-inline ':'checkbox-inline '" >-->
+                                    <!--<input type="checkbox" name="fj"  th:value="0" th:text="学分证书" />-->
+                                <!--</label>-->
+                                <!--&lt;!&ndash;<label class="checkbox-inline" >&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<input type="checkbox" name="fj"  th:value="1" th:text="参考答案" />&ndash;&gt;-->
+                                <!--&lt;!&ndash;</label>&ndash;&gt;-->
+                                <!--<label class="checkbox-inline" >-->
+                                    <!--<input type="checkbox" name="fj"  th:value="2" th:text="电子手册" />-->
+                                <!--</label>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4 pull-left">
+                                <button type="submit" class="btn btn-primary js-ajax-submit">提交</button>
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+</body>
+</html>

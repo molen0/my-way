@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>课件管理</h1>
+    <small>列表管理</small>
+</section>
+
+<div id="toolbar">
+    <a th:href="@{/api/courseCourseware/from}" class="btn btn-primary" >添加课件</a>
+</div>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-10 col-md-offset-0">
+            <div class="col-sm-3 col-md-offset-2">
+                <select name="courseAttr" id="ccourseAttr" class="form-control" >
+                    <option  value="">请选择课程属性</option>
+                    <option value="0" >乡村医生</option>
+                    <option value="1" >全科医生</option>
+                </select>
+            </div>
+            <div class="col-sm-4 col-md-offset-1">
+                <input type="text"  name="name" class="form-control" id="name"  placeholder="资源名" />
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="dataGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns: [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+//                {title: '序号',align: 'center',
+//                    switchable:false,
+//                    formatter:function(value,row,index){
+//                        //return index+1; //序号正序排序从1开始
+//                        var pageSize=$('#dataGrid').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+//                        var pageNumber=$('#dataGrid').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+//                        return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+//                    }
+//                },
+                {title: "课程名", field: "courseName"},
+                {title: "课程属性", field: "courseAttr",formatter:getCourseAttr},
+                {title: "授课专家", field: "specialistNames"},
+                {title: "资源名", field: "name"},
+                {title: "PDF预览", field: "show", align: 'center',events: showEvents,  formatter: show},
+                // {title: "启用状态", field: "enable", formatter : tableModel.getState},
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime",formatter:getdate},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url: basePath+'/api/courseCourseware/list',
+            queryParams: function(params){
+                params['name']=$("#name").val();
+                params['courseAttr']=$("#ccourseAttr").val();
+                console.log(params['name']);
+                return params;
+            },
+            responseHandler : function (res) {
+                return {
+                    rows :res.result.pageInfo.datas,
+                    total : res.result.pageInfo.totalCount
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+
+    function del(id){
+        //debugger;
+        layer.confirm('确定删除吗?', function(){
+            $.getJSON(basePath+'/api/courseCourseware/delete', {ids:id}, function(ret){
+                if (ret.status){
+                    layer.msg(ret.msg, {icon: 1});
+                    $('#dataGrid').bootstrapTable('refresh',null)
+                } else {
+                    layer.msg(ret.msg, {icon: 2});
+                }
+            });
+        });
+    }
+    function getCourseAttr   (value,row,index) {
+        let type=value;
+        if(type==0){
+            return "乡村医生";
+        }else if(type == 1){
+            return "全科医生";
+        }
+    }
+    //格式化日期
+    function getdate(date) {
+        var now = new Date(date),
+            y = now.getFullYear(),
+            m = now.getMonth() + 1,
+            d = now.getDate();
+        return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+    }
+    function getType(value, row, index){
+        return value==1 ? "考试" : "学习";
+    }
+    function operateFormatter(value, row, index) {
+        return [
+//            '<a class="grant" href="javascript:void(0);" >',
+//            '<i class="glyphicon glyphicon-edit"></i>授权',
+//            '</a>  ',
+            '<a href="'+basePath+'/api/courseCourseware/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+    function show (value, row, index) {
+        return [
+            '<a class="show" href="javascript:void(0);" >',
+            '<i class="glyphicon "></i>预览下载',
+            '</a>  ',
+
+        ].join('');
+    }
+
+    window.operateEvents = {
+
+        'click .remove' : function (e, value, row, index) {
+            //debugger;
+            del(row.id)
+        }
+
+    };
+    window.showEvents = {
+
+        'click .show' : function (e, value, row, index) {
+
+            layer.open({
+                type: 2,
+                title: 'PDF图片',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                content: ""+row.pdfPath+""
+
+            });
+
+        }
+    };
+
+
+</script>
+</body>
+</html>
+

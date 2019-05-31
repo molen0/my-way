@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="'须知'+${#strings.isEmpty(studyExamNeeds.id)?'添加':'修改'}"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" th:attr="action=@{/api/studyExamNeeds/save}" id="form" method="post">
+                        <input type="hidden" name="id" th:value="${studyExamNeeds.id}" />
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" class="form-control" id="title" required="true" th:value="${studyExamNeeds.title}" placeholder="请输入标题名称" />
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label for="photoUrl" class="col-sm-2 control-label"><复文本内容></复文本内容></label>-->
+                            <!--<div class="col-sm-10">-->
+                                <!--<input type="text" name="photoUrl" class="form-control" id="photoUrl"  placeholder="请输入图片地址" />-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">须知类型</label>
+                            <div class="col-sm-10">
+                                <select name="type" class="form-control">
+                                    <option value="1" th:selected="${studyExamNeeds.type eq 1}">考试须知</option>
+                                    <option value="0" th:selected="${studyExamNeeds.type eq 0}">学习须知</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">课程类型</label>
+                            <div class="col-sm-10">
+                                <select name="status" class="form-control">
+                                    <option value="1" th:selected="${studyExamNeeds.status eq 1}">必学课程</option>
+                                    <option value="0" th:selected="${studyExamNeeds.status eq 0}">知识学习</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" >
+                            <label  class="col-sm-2 control-label" th:width="200">录入文本内容</label>
+                            <div class="box-body" >
+                            </div>
+                            <div class="box-body" >
+                                <script id="textArea" name="textArea" class="content" th:value="${studyExamNeeds.textArea}"type="text/plain" ></script>
+                            </div>
+
+                            <!--<div class="box-body">-->
+                                <!--<script id="content" name="content" type="text/plain"></script>-->
+                            <!--</div>-->
+                        </div>
+
+                        <div class="form-group" >
+                            <input type="hidden" th:value="${studyExamNeeds.textArea}" id="testInput"/>
+                            <div class="col-sm-offset-2 col-sm-4 pull-left">
+
+                                <button type="submit" onclick="submitForm();" class="btn btn-default js-ajax-submit">提交</button>
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    $(function () {
+        var content = $("#testInput").val();
+     // var editor = new UE.ui.Editor({initialFrameHeight:100,initialFrameWidth:100 });
+      //editor.render("actDescribe");
+        UE.getEditor("textArea");
+//        ue.ready(function() {
+//           // ue.setHeight(400);
+//            //设置编辑器的内容
+//            // ue.setContent('hello');
+//            // //获取html内容，返回: <p>hello</p>
+//            // var html = ue.getContent();
+//            // //获取纯文本内容，返回: hello
+//            // var txt = ue.getContentTxt();
+//        });*/
+
+        $("#textArea").val(content);
+
+       // var va = UE.getEditor('textArea').getContent();
+        //$("#photoUrl").attr(value,va);
+    });
+
+</script>
+</body>
+</html>

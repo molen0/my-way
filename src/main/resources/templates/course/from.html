@@ -1,0 +1,340 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="${#strings.isEmpty(course.id)?'添加':'修改'}+'课程'"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" th:attr="action=@{/api/course/save}" method="post" id="subForm" enctype="multipart/form-data">
+                        <input type="hidden" name="id" id="id" th:value="${course.id}" />
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">课程名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="title" class="form-control" id="title"  th:value="${course.title}" maxlength="40"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="courseType" class="col-sm-2 control-label">课程类型</label>
+                            <div class="col-sm-10">
+                                <select name="courseType" class="form-control" id="courseType">
+                                    <option th:selected="${#strings.equals(course.courseType, 1)}" value="1">必学课程</option>
+                                    <option th:selected="${#strings.equals(course.courseType, 2)}" value="2">知识学习</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="courseAttr" class="col-sm-2 control-label">课程属性</label>
+                            <div class="col-sm-10">
+                                <select name="courseAttr" class="form-control" id="courseAttr">
+                                    <option th:selected="${#strings.equals(course.courseAttr, 1)}" value="1">全科医生</option>
+                                    <option th:selected="${#strings.equals(course.courseAttr, 0)}" value="0">乡村医生</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="semester" class="col-sm-2 control-label">学期</label>
+                            <div class="col-sm-10">
+                                <select name="semester" class="form-control" id="semester">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="photoU" class="col-sm-2 control-label">课程图片</label>
+                            <div class="col-sm-10">
+                                <img th:class="${#strings.isEmpty(course.photo)?'hidden':''}" id="photoUrl" th:src="${course.photo}" style="margin-top:10px;display: block;height: 189px;width: 252px;">
+                                <input type="file" name="photoU" id="photoU" />
+                            </div>
+                            <div style="margin-left: 170px;color: red;">尺寸：504*378</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="photoU" class="col-sm-2 control-label">视频图片</label>
+                            <div class="col-sm-10">
+                                <img th:class="${#strings.isEmpty(course.image)?'hidden':''}" id="imageUrl" th:src="${course.image}" style="margin-top:10px;display: block;height: 215px;width: 375px;">
+                                <input type="file" name="imageU" id="imageU" />
+                            </div>
+                            <div style="margin-left: 170px;color: red;">尺寸：750*430</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="photoU" class="col-sm-2 control-label">是否开启考试</label>
+                            <div class="col-sm-10" style="margin-top: 5px;">
+                                <input type="radio" name="isOpen" th:value="1" th:checked="${#strings.equals(course.isOpen, 1)}">开启
+                                <input type="radio" name="isOpen" th:value="0" th:checked="${#strings.equals(course.isOpen, 0)}">关闭
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="photoU" class="col-sm-2 control-label">状态</label>
+                            <div class="col-sm-10" style="margin-top: 5px;">
+                                <input type="radio" name="status" th:value="1" th:checked="${#strings.equals(course.status, 1)}">正常
+                                <input type="radio" name="status" th:value="0" th:checked="${#strings.equals(course.status, 0)}">停用
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="indexs" class="col-sm-2 control-label">排序</label>
+                            <div class="col-sm-10">
+                                <input maxlength="2" m type="text" name="indexs" class="form-control" id="indexs"  th:value="${course.indexs}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="specialist" class="col-sm-2 control-label">授课专家</label>
+                            <div class="col-sm-10">
+                                <input type="text" autocomplete="off" name="specialist" class="form-control" id="specialist"  th:value="${course.specialist}" readonly="readonly"/>
+                                <div id="package" class="ubye-sltcity-downmenu">
+                                    <ul class="ubye-sltcity-downmenu-container"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="introduce" class="col-sm-2 control-label">课程介绍</label>
+                            <div class="col-sm-10">
+                                <textarea name="introduce" class="form-control" id="introduce" th:text="${course.introduce}" maxlength="500" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <input type="hidden" th:value="${course.semesterId}" id="semesterId" name="semesterId"/>
+                                <input type="hidden" th:value="${ctitle}" name="ctitle"/>
+                                <input type="hidden" th:value="${cspecialist}" name="cspecialist"/>
+                                <input type="hidden" th:value="${ccourseAttr}" name="ccourseAttr"/>
+                                <input type="hidden" th:value="${ccourseType}" name="ccourseType"/>
+                                <input type="hidden" th:value="${csemesterId}" name="csemesterId"/>
+                                <input type="hidden" th:value="${course.specialistCodes}" id="specialistCodes" name="specialistCodes"/>
+                                <input type="hidden" th:value="${course.specialistNames}" id="specialistNames" name="specialistNames"/>
+                                <button type="button" onclick="submitFuntion()" class="btn btn-default js-ajax-submit">提交</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+</body>
+</html>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $(function(){
+        //学期下拉列表
+        var semesterId = $("#semesterId").val();
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/course/getSemester",
+            dataType: "json",
+            success: function(data){
+                var html = "";
+                var list = data.result.content;
+                for(var i=0;i<list.length;i++){
+                    if(semesterId ==list[i].id){
+                        html += '<option value="'+list[i].id+'" selected="true">'+list[i].name+'</option>';
+                    }else{
+                        html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                    }
+                }
+                $("#semester").append(html);
+            }
+        });
+
+        //专家多选
+        var throttle = function(func, delay) {
+            var timer = null;
+            var startTime = Date.now();
+
+            return function() {
+                var curTime = Date.now();
+                var remaining = delay - (curTime - startTime);
+                var context = this;
+                var args = arguments;
+
+                clearTimeout(timer);
+                if(remaining <= 0) {
+                    func.call(context, args);
+                    startTime = Date.now();
+                } else {
+                    timer = setTimeout(func.bind(context, args), remaining);
+                }
+            }
+        }
+        var rqs = throttle(function(args) {
+            if($(".ubye-sltcity-downmenu-container").has("li").length > 0){
+                return
+            }
+            var name = args[0];
+            var id = $("#id").val();
+            $.ajax({
+                url: basePath+"/api/course/getSpecialist",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function(data) {
+                        var result = data.result;
+                        var ars = []
+                        if(result.length) {
+                            $("#package").show()
+                        }
+                        for(var i = 0; i < result.length; i++) {
+                            var item = result[i]
+                            if(item.checked==1){
+                                ars.push(
+                                    '<li class="ubye-sltcity-downmenu__item" data-code="' + item.id + '">' +
+                                    '<input name="city" type="checkbox" value="" checked="checked"/>  ' + item.name + '</li>'
+                                )
+                            }else{
+                                ars.push(
+                                    '<li class="ubye-sltcity-downmenu__item" data-code="' + item.id + '">' +
+                                    '<input name="city" type="checkbox" value="" />  ' + item.name + '</li>'
+                                )
+                            }
+                        }
+                        $('.ubye-sltcity-downmenu-container').html(ars.join(''))
+                }
+            })
+        }, 1000)
+        var disBlur = false
+        var inputEl = null
+        $(document).on('click input', '#specialist', function() {
+            inputEl = $(this)
+            var name = inputEl.val();
+            $("#package").show()
+            rqs($(this).val())
+        });
+
+        $(document).on('blur', '#specialist', function() {
+            if(!disBlur) {
+                $("#package").hide()
+            }
+        })
+
+        $(document).on('blur', '.ubye-sltcity-downmenu', function() {
+            if(!disBlur) {
+                $("#package").hide()
+            }
+        })
+
+        $(document).on('mouseenter', '.ubye-sltcity-downmenu-container', function() {
+            disBlur = true;
+            console.log("disBlur mouseenter",disBlur)
+
+        })
+        $(document).on('mouseleave', '.ubye-sltcity-downmenu-container', function() {
+            disBlur = false;
+            console.log("disBlur mouseleave",disBlur)
+        })
+        //名称，code拼接
+        $(document).on('click', '.ubye-sltcity-downmenu__item', function() {
+            var cityText = "";
+            var codeText = "";
+            $(".ubye-sltcity-downmenu-container input[type='checkbox']").each(function(i) {
+                if($(this).attr('checked')){
+                    var cityName = $(this).parent().text().trim()+";";
+                    var codeName = $(this).parent().attr("data-code")+";";
+                    cityText += cityName;
+                    codeText += codeName;
+                }
+            });
+            inputEl.val(cityText)
+            $("#specialistCodes").val(codeText);
+            $("#specialistNames").val(cityText);
+        });
+
+        //图片上传修改
+        $("#photoU").change(function(){
+            var photo = document.getElementById("photoU");
+            var i = photo.value.lastIndexOf('.');
+            var len = photo.value.length;
+            var extEndName = photo.value.substring(i + 1, len);
+            var extName = "GIF,BMP,PNG,JPG,JPEG";
+            if(extName.indexOf(extEndName.toUpperCase()) == -1){
+                layer.msg("您只能上传" + extName + "格式的文件");
+                return false;
+            }
+        });
+    });
+
+    //提交
+    function submitFuntion(){
+        var title = $('#title').val();
+        var id = $('#id').val();
+        var courseType = $('#courseType option:selected').val();
+        var courseAttr = $('#courseAttr option:selected').val();
+        var semester = $('#semester option:selected').val();
+        $('#semesterId').val(semester);
+        var isOpen = $('input[name="isOpen"]:checked').val();
+        var status = $('input[name="status"]:checked').val();
+        var photoUrl = document.getElementById("photoUrl");
+        var photo = document.getElementById("photoU");
+        var photoUrlValue = document.getElementById("photoUrl").value;
+        var photoValue = document.getElementById("photoU").value;
+        var imageUrl = document.getElementById("imageUrl");
+        var image = document.getElementById("imageU");
+        var imageUrlValue = document.getElementById("imageUrl").value;
+        var imageValue = document.getElementById("imageU").value;
+        var indexs = $('#indexs').val();
+        var specialistCodes = $('#specialistCodes').val();
+        if(title.trim() == null || title.trim() == ""){
+            layer.msg("课程名称不能为空");
+            return false;
+        }
+        if(id == null || id =="" || id == undefined){
+            if((photoUrlValue == null || photoUrlValue =="" || photoUrlValue == undefined) && (photoValue == "" || photoValue ==null || photoValue == undefined)){
+                layer.msg("请上传课程图片！");
+                return false;
+            }
+            if(photoValue != null && photoValue !=""){
+                var i = photo.value.lastIndexOf('.');
+                var len = photo.value.length;
+                var extEndName = photo.value.substring(i + 1, len);
+                var extName = "GIF,BMP,PNG,JPG,JPEG";
+                if(extName.indexOf(extEndName.toUpperCase()) == -1){
+                    layer.msg("您只能上传" + extName + "格式的文件");
+                    return false;
+                }
+            }
+            if((imageUrlValue == null || imageUrlValue =="" || imageUrlValue == undefined) && (imageValue == "" || imageValue ==null || imageValue == undefined)){
+                layer.msg("请上传视频图片！");
+                return false;
+            }
+            if(imageValue != null && imageValue !=""){
+                var i = image.value.lastIndexOf('.');
+                var len = image.value.length;
+                var extEndName = image.value.substring(i + 1, len);
+                var extName = "GIF,BMP,PNG,JPG,JPEG";
+                if(extName.indexOf(extEndName.toUpperCase()) == -1){
+                    layer.msg("您只能上传" + extName + "格式的文件");
+                    return false;
+                }
+            }
+        }else{
+        }
+        if(isOpen == null || isOpen == ""){
+            layer.msg("请选择课程考试状态");
+            return false;
+        }
+        if(status == null || status == ""){
+            layer.msg("请选择考试状态");
+            return false;
+        }
+        if(indexs != null && indexs != ""){
+            var n = /^[1-9]\d*$/;
+            if(!n.test(indexs)){
+                layer.msg('排序只能为正整数');
+                return false;
+            }
+        }
+        if(specialistCodes == null || specialistCodes == ""){
+            layer.msg("请选择授课专家");
+            return false;
+        }
+        var form = document.getElementById("subForm");
+        form.submit();
+    }
+</script>

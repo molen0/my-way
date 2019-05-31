@@ -1,0 +1,62 @@
+/**
+ * flex.less - flex布局
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+/**
+ * _mixins.less - Less混合 - 摘自Framework7
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+.img-responsive {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.floatL {
+  float: left;
+}
+.floatR {
+  float: right;
+}
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+}
+.common_header {
+  width: 100%;
+  height: 2.5rem;
+  background: -webkit-linear-gradient(338deg, #5CD3FC 7%, #42A3FC 96%);
+  background: linear-gradient(-248deg, #5CD3FC 7%, #42A3FC 96%);
+  line-height: 2.5rem;
+  color: #ffffff;
+  position: fixed;
+  left: 0px;
+  top: 0;
+  z-index: 10000000;
+}
+.common_header:before,
+.common_header:after {
+  content: " ";
+  display: table;
+}
+.common_header:after {
+  clear: both;
+}
+.common_header .title {
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.common_header > i {
+  padding-left: 0.75rem;
+  font-size: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+}
+
+/*# sourceMappingURL=common.css.map */

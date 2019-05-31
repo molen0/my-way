@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>学期管理</h1>
+    <small>学期列表</small>
+</section>
+<div id="toolbar">
+    <a th:href="@{/api/semester/from}" class="btn btn-primary" >添加学期</a>
+</div>
+<section class="content table-content">
+    <table id="semesterGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#semesterGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {
+                    title: "序号",
+                    field: "id",
+                    align:"center",
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    title: "学期名称",
+                    field: "name",
+                    align:"center"
+                },
+                {
+                    title: "是否为本学期",
+                    field: "status",
+                    align:"center",
+                    formatter :getStatus
+                },
+                {
+                    title: "课程数",
+                    field: "courseCount",
+                    align:"center"
+                },
+                {
+                    title: "每道题分钟",
+                    field: "minutes",
+                    align:"center"
+                },
+                {
+                    title: "考试结束时间",
+                    field: "courseEndTime",
+                    align:"center"
+                },
+                {
+                    title: "系统发证书时间",
+                    field: "time",
+                    align:"center"
+                },
+                {
+                    title: "电子手册地址",
+                    field: "handBookUrl",
+                    align:"center"
+                },
+                {
+                    title: "创建时间",
+                    field: "createTime",
+                    align:"center"
+                },
+                {
+                    title: "更新时间",
+                    field: "updateTime",
+                    align:"center"
+                },
+                {
+                    title: "操作",
+                    field: "operate",
+                    align: 'center',
+                    events: operateEvents,
+                    align:"center",
+                    formatter: operateFormatter
+                }
+            ],
+            url : basePath+'/api/semester/list',
+            queryParams: function(params){
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res.result.pageInfo.totalElements)
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+
+    function getStatus   (value,row,index) {
+        return value==0 ? "否" : "是";
+    }
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a href="'+basePath+'/api/semester/from?id='+row.id+'" >',
+             '<i class="glyphicon glyphicon-edit"></i>修改',
+             '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>',
+            '<a href="'+basePath+'/api/credit/email?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-credit-card"></i>邮件',
+            '</a>  '
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/semester/delete', 'id');
+        }
+    };
+</script>
+</body>
+
+</html>

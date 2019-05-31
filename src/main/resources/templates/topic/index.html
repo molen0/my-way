@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>考试课程管理</h1>
+    <small>列表管理</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-9 col-md-offset-3">
+            <div class="col-sm-3">
+                <input type="text"  name="ctitle" id="ctitle"  class="form-control"  placeholder="请输入课程名称"/>
+            </div>
+            <div class="col-sm-3">
+                <select name="ccourseAttr" id="ccourseAttr" class="form-control" >
+                    <option  value="">--请选择课程属性--</option>
+                    <option value="0" >乡村医生</option>
+                    <option value="1" >全科医生</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select name="ccourseType" id="ccourseType" class="form-control" >
+                    <option  value="">--请选择课程类型--</option>
+                    <option value="1" >必学课程</option>
+                    <option value="2" >知识学习</option>
+                    <option value="3" >经验分享</option>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="dataGrid"></table>
+</section>
+<div id="toolbar">
+    <a href="#" id="add" class="btn btn-primary">添加考试课程</a>
+</div>
+<div th:include="footer"></div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "课程名称", field: "course.title" },
+                {title: "课程属性", field: "course.courseAttr", formatter :courseAttrfor},
+                {title: "课程类型", field: "course.courseType", formatter :courseTypefor},
+                {title: "参加人数", field: "course.studyNum" },
+                {title: "授课专家", field: "specialListName" },
+                {title: "状态", field: "course.status" , formatter :statusfor},
+                {title: "操作", field: "operate", align: 'center',  formatter: operateFormatter1}
+            ],
+            url : basePath+'/api/topic/list',
+            queryParams: function(params){
+                params['ctitle']=$("#ctitle").val();
+                params['ccourseAttr']=$("#ccourseAttr").val();
+                params['ccourseType']=$("#ccourseType").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res);
+                return {
+                    rows : res.result.pageInfo.datas,
+                    total : res.result.pageInfo.totalCount
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createdAt',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20,  50, 100],
+            toolbar : "#toolbar",
+            showRefresh : true,
+            detailView : true, //是否显示父子表
+            showToggle : true,
+            //注册加载子表的事件。注意下这里的三个参数！
+            onExpandRow : function (index, row, $detail) {
+                var courseId = row.id;
+                var prjLogBookProblemTable = $detail.html('<table></table>').find('table');
+                $(prjLogBookProblemTable).bootstrapTable({
+                    columns : [
+                        {title: "序号", field: "order" },
+                        {title: "题目", field: "topicName"},
+                        {title: "正确答案", field: "topicAnswer"},
+                        {title: "类型", field: "type",formatter:typeformat},
+                        {title: "修改时间", field: "updateTime"},
+                        {title: "操作", field: "operate", align: 'center',  formatter: operateFormatter2}
+                    ],
+                    url : basePath+'/api/topic/listByTopic',
+                    method : 'get', //请求方式(*)
+                    sortable : false, //是否启用排序
+                    uniqueId : "id", //每一行的唯一标识，一般为主键列
+                    sidePagination : 'server',
+                    queryParams: { courseId: courseId },
+                    ajaxOptions: { courseId: courseId },
+                    detailView : true, //是否显示父子表
+                    responseHandler : function (res) {
+                        console.log(res.result.pageInfo);
+                        return {
+                            rows : res.result.pageInfo
+                        }
+                    },
+                    //注册加载子表的事件。注意下这里的三个参数！
+                    onExpandRow : function (index, row, $detail) {
+                        var topicId = row.id;
+                        var prjLogBookProblemTable = $detail.html('<table></table>').find('table');
+                        $(prjLogBookProblemTable).bootstrapTable({
+                            columns : [
+                                {title: "选项", field: "order" },
+                                {title: "描述", field: "answerName"},
+                                {title: "创建时间", field: "createTime"},
+                                {title: "修改时间", field: "updateTime"},
+                                {title: "操作", field: "operate", align: 'center',  formatter: operateFormatter3}
+                            ],
+                            url : basePath+'/api/topic/listByAnswer',
+                            method : 'get', //请求方式(*)
+                            sortable : false, //是否启用排序
+                            uniqueId : "id", //每一行的唯一标识，一般为主键列
+                            sidePagination : 'server',
+                            queryParams: { topicId: topicId },
+                            ajaxOptions: { topicId: topicId },
+                            detailView : false, //是否显示父子表
+                            responseHandler : function (res) {
+                                console.log(res.result.pageInfo);
+                                return {
+                                    rows : res.result.pageInfo
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+        });
+    }
+    function courseAttrfor(value,row,index) {
+        switch (value ){
+            case 0 :
+                return "乡村医生";
+            case 1 :
+                return "全科医生";
+        }
+    }
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+    function typeformat(value,row,index) {
+        switch (value ){
+            case 1 :
+                return "单选";
+            case 2 :
+                return "多选";
+        }
+    }
+    function courseTypefor(value,row,index) {
+        switch (value ){
+            case 1 :
+                return "必学课程";
+            case 2 :
+                return "知识学习";
+            case 3 :
+                return "经验分享";
+        }
+    }
+    function statusfor(value,row,index) {
+        switch (value ){
+            case 0 :
+                return "停用";
+            case 1 :
+                return "正常";
+        }
+    }
+    function operateFormatter1(value, row, index) {
+        //  if(row.isSystem == 0){
+        return [
+            '<a href="'+basePath+'/api/topic/from?parentId='+row.id+'&mode=1" >',
+            '<i class="glyphicon glyphicon-plus"></i>新增',
+            '</a>  ',
+            '<a class="remove" onclick="del('+row.id+',1);" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+        //}
+    }
+    function operateFormatter2(value, row, index) {
+        //  if(row.isSystem == 0){
+        return [
+            '<a href="'+basePath+'/api/topic/from?parentId='+row.id+'&mode=2" >',
+            '<i class="glyphicon glyphicon-plus"></i>新增',
+            '</a>  ',
+            '<a href="'+basePath+'/api/topic/from?id='+row.id+'&mode=1" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" onclick="del('+row.id+',2);" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+        //}
+    }
+    function operateFormatter3(value, row, index) {
+        //  if(row.isSystem == 0){
+        return [
+            '<a href="'+basePath+'/api/topic/from?id='+row.id+'&mode=2" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" onclick="del('+row.id+',3);" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+        //}
+    }
+    $("#add").click(function () {
+        layer.open({
+            type: 2,
+            title: '课程选择',
+            shadeClose: true,
+            shade: false,
+            maxmin: true, //开启最大化最小化按钮
+            area: ['500px', '600px'],
+            content: basePath+'/api/topic/coursefrom'
+//            end:function(){
+//                $('#dataGrid').bootstrapTable('refresh',null)
+//            }
+        });
+    });
+    window.operateEvents = {
+        'click .remove': function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/admin/delete', 'id');
+        }
+    };
+    function relod() {
+        $('#dataGrid').bootstrapTable('refresh',null)
+    }
+    function del(id,mode){
+        layer.confirm('确定删除吗?', function(){
+            $.getJSON(basePath+'/api/topic/delete', {id:id,mode:mode}, function(ret){
+                if (ret.status){
+                    layer.msg(ret.msg, {icon: 1});
+                    $('#dataGrid').bootstrapTable('refresh',null)
+                } else {
+                    layer.msg(ret.msg, {icon: 2});
+                }
+            });
+        });
+    }
+</script>
+</html>

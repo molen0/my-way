@@ -1,0 +1,225 @@
+/**
+ * flex.less - flex布局
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+/**
+ * _mixins.less - Less混合 - 摘自Framework7
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+.img-responsive {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.floatL {
+  float: left;
+}
+.floatR {
+  float: right;
+}
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+}
+.common_header {
+  width: 100%;
+  height: 2.5rem;
+  background: -webkit-linear-gradient(338deg, #5CD3FC 7%, #42A3FC 96%);
+  background: linear-gradient(-248deg, #5CD3FC 7%, #42A3FC 96%);
+  line-height: 2.5rem;
+  color: #ffffff;
+  position: fixed;
+  left: 0px;
+  top: 0;
+  z-index: 10000000;
+}
+.common_header:before,
+.common_header:after {
+  content: " ";
+  display: table;
+}
+.common_header:after {
+  clear: both;
+}
+.common_header .title {
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.common_header > i {
+  padding-left: 0.75rem;
+  font-size: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+}
+body {
+  background: #F9F9F9;
+  cursor: pointer;
+}
+.To_feed_back {
+  width: 100%;
+  margin-bottom: 11.4rem;
+}
+.To_feed_back #textarea_text {
+  display: block;
+  background: white;
+  width: 100%;
+  height: 10rem;
+  border: none;
+  padding: 0.5rem  ;
+  font-size: 0.8rem;
+  color: #999999;
+  box-sizing: border-box;
+}
+.To_feed_back .add_pictures {
+  height: 5.5rem;
+  margin-top: 0.5rem;
+  background: white;
+  padding-left: 0.725rem;
+  padding-right: 0.725rem;
+}
+.To_feed_back .add_pictures .add_pictures_title {
+  padding-top: 0.2rem;
+  margin-bottom: 0.425rem;
+}
+.To_feed_back .add_pictures .add_pictures_title span:nth-child(1) {
+  font-size: 0.6rem;
+  color: #333333;
+}
+.To_feed_back .add_pictures .add_pictures_title span:nth-child(2) {
+  font-size: 0.6rem;
+  color: #999999;
+}
+.To_feed_back .add_pictures .img_list_box {
+  height: 3.775rem;
+}
+.To_feed_back .add_pictures .img_list_box .img_list {
+  float: left;
+}
+.To_feed_back .add_pictures .img_list_box .img_list > li {
+  width: 3.025rem;
+  height: 3.025rem;
+  float: left;
+  margin-right: 0.5rem;
+  position: relative;
+}
+.To_feed_back .add_pictures .img_list_box .img_list > li .delete_btn {
+  width: 0.8rem;
+  height: 0.8rem;
+  text-align: center;
+  line-height: 0.8rem;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  color: #ff0000;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  position: absolute;
+  right: -2px;
+  top: -0.4rem;
+}
+.To_feed_back .add_pictures .img_list_box .upload_a_picture {
+  width: 3.025rem;
+  height: 3.025rem;
+  float: left;
+  background-size: 100% 100%;
+  border: none;
+  background: url(../images/sdbysc.png) no-repeat center;
+  position: relative;
+}
+.To_feed_back .add_pictures .img_list_box .upload_a_picture:before {
+  background: transparent;
+}
+.To_feed_back .add_pictures .img_list_box .upload_a_picture:after {
+  background: transparent;
+}
+.To_feed_back .add_pictures .san_de_zambia {
+  padding-bottom: 0.75rem;
+  padding-top: 0.5rem;
+  overflow: hidden;
+}
+.To_feed_back .add_pictures .san_de_zambia li {
+  float: left;
+  padding-right: 0.5rem;
+  width: 20%;
+}
+.To_feed_back .add_pictures .san_de_zambia li:nth-child(3n) {
+  padding-right: 0rem;
+}
+.To_feed_back .add_pictures .san_de_zambia li img {
+  width: 100%;
+}
+.feed_back {
+  width: -webkit-calc(100% - 1.5rem);
+  width: calc(100% - 1.5rem);
+  margin: 0 auto;
+}
+.feed_back .feed_back_btn {
+  width: 100%;
+  background: #0CB7F5;
+}
+.feed_back .feed_back_btn:active {
+  background: #0CB7F5;
+}
+@media screen and (min-width: 320px) {
+  .To_feed_back {
+    margin-bottom: 7.4rem;
+  }
+}
+@media screen and (min-width: 375px) {
+  .To_feed_back {
+    margin-bottom: 11.4rem;
+  }
+}
+.mask {
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  opacity: .6;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+}
+.mask .upImgMask {
+  width: 10rem;
+  height: 2rem;
+  line-height: 2rem;
+  border-radius: 4px;
+  text-align: center;
+  background: #000;
+  font-size: 0.6rem;
+  color: #fff;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+          transform: translate3d(-50%, -50%, 0);
+}
+.release .release_top {
+  width: 2.35rem;
+  height: 2.35rem;
+  margin: 0 auto;
+}
+.release .release_top img {
+  width: 2.35rem;
+  height: 2.35rem;
+}
+.release h1 {
+  margin-top: 0.72rem;
+  font-size: 0.9rem;
+  color: #333333;
+  letter-spacing: 0;
+  text-align: center;
+}
+.weui-dialog__bd {
+  padding: 0 0.75rem 0.8rem;
+}
+
+/*# sourceMappingURL=To_feed_back.css.map */

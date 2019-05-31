@@ -1,0 +1,338 @@
+/**
+ * flex.less - flex布局
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+/**
+ * _mixins.less - Less混合 - 摘自Framework7
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+.img-responsive {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.floatL {
+  float: left;
+}
+.floatR {
+  float: right;
+}
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+}
+.common_header {
+  width: 100%;
+  height: 2.5rem;
+  background: -webkit-linear-gradient(338deg, #5CD3FC 7%, #42A3FC 96%);
+  background: linear-gradient(-248deg, #5CD3FC 7%, #42A3FC 96%);
+  line-height: 2.5rem;
+  color: #ffffff;
+  position: fixed;
+  left: 0px;
+  top: 0;
+  z-index: 10000000;
+}
+.common_header:before,
+.common_header:after {
+  content: " ";
+  display: table;
+}
+.common_header:after {
+  clear: both;
+}
+.common_header:before,
+.common_header:after {
+  content: " ";
+  display: table;
+}
+.common_header:after {
+  clear: both;
+}
+.common_header .title {
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.common_header > i {
+  padding-left: 0.75rem;
+  font-size: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+}
+.records {
+  width: 100%;
+  height: 100%;
+}
+.records .common_header {
+  height: 1.75rem;
+  background: -webkit-linear-gradient(338deg, #5CD3FC 7%, #42A3FC 96%);
+  background: linear-gradient(-248deg, #5CD3FC 7%, #42A3FC 96%);
+  line-height: 1.75rem;
+  color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+}
+.records .common_header:before,
+.records .common_header:after {
+  content: " ";
+  display: table;
+}
+.records .common_header:after {
+  clear: both;
+}
+.records .common_header:before,
+.records .common_header:after {
+  content: " ";
+  display: table;
+}
+.records .common_header:after {
+  clear: both;
+}
+.records .common_header:before,
+.records .common_header:after {
+  content: " ";
+  display: table;
+}
+.records .common_header:after {
+  clear: both;
+}
+.records .common_header:before,
+.records .common_header:after {
+  content: " ";
+  display: table;
+}
+.records .common_header:after {
+  clear: both;
+}
+.records .common_header .title {
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.records .common_header > i {
+  margin-left: 0.75rem;
+  font-size: 16px;
+}
+.records .records_container {
+  width: 100%;
+  background: #F9F9F9;
+  height: 100%;
+}
+.records .records_container .records_top .foot_title {
+  padding: 0.57rem 0.75rem;
+}
+.records .records_container .records_top .foot_title h1 {
+  font-size: 0.85rem;
+  color: #333333;
+  line-height: 0.9rem;
+  height: 0.9rem;
+  position: relative;
+  text-indent: 0.5rem;
+}
+.records .records_container .records_top .foot_title h1:before {
+  width: 0.2rem;
+  height: 0.9rem;
+  background: #0CB7F5;
+  content: '';
+  position: absolute;
+  top: 0%;
+}
+.records .records_container .records_top .foot_title h1:before {
+  left: 0%;
+}
+.records .records_container .item {
+  padding-bottom: 0.5rem;
+}
+.records .records_container .item .records_group {
+  padding: 0 0.75rem;
+  background-color: #fff;
+  margin-bottom: 0.5rem;
+}
+.records .records_container .item .records_group .records_list {
+  height: 2.5rem;
+  padding: 1rem 0;
+}
+.records .records_container .item .records_group .records_list .list_left {
+  width: 2.5rem;
+  height: 2.5rem;
+  -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+.records .records_container .item .records_group .records_list .list_left .circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  position: relative;
+  float: left;
+  border-radius: 50%;
+  background: rgba(12, 183, 245, 0.51);
+  overflow: hidden;
+}
+.records .records_container .item .records_group .records_list .list_left .circle .pie_left {
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  clip: rect(0, 1.25rem, auto, 0);
+  top: 0;
+  left: 0;
+}
+.records .records_container .item .records_group .records_list .list_left .circle .pie_left .left {
+  clip: rect(0, 1.25rem, auto, 0);
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #FF7768;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.records .records_container .item .records_group .records_list .list_left .circle .pie_right {
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip: rect(0, auto, auto, 1.25rem);
+}
+.records .records_container .item .records_group .records_list .list_left .circle .pie_right .right {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #FF7768;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip: rect(0, auto, auto, 1.25rem);
+}
+.records .records_container .item .records_group .records_list .list_left .circle .theValue {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  top: 0.1rem;
+  left: 0.1rem;
+  background: white;
+  position: absolute;
+  text-align: center;
+  line-height: 2rem;
+  font-size: 0.5rem;
+  color: #F64E58;
+  -webkit-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+.records .records_container .item .records_group .records_list .list_cen {
+  margin-left: 1.25rem;
+}
+.records .records_container .item .records_group .records_list .list_cen div h1 {
+  font-size: 0.8rem;
+  color: #333333;
+  letter-spacing: 0;
+  text-align: center;
+  font-weight: normal;
+}
+.records .records_container .item .records_group .records_list .list_cen div h1 span {
+  font-size: 0.8rem;
+  color: #FFA73B;
+  letter-spacing: 0;
+  text-align: center;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result {
+  height: 1.6rem;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_true {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  width: 50%;
+  position: relative;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_true:after {
+  width: 0.05rem;
+  height: 0.75rem;
+  background: #BBBBBB;
+  content: '';
+  position: absolute;
+  top: 0.5rem;
+  right: 0;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_true .result_icon {
+  color: #0CB7F5;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_true .result_icon i {
+  font-size: 17px;
+  margin-right: 0.25rem;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_true .text {
+  font-size: 0.6rem;
+  color: #999999;
+  letter-spacing: 0;
+  text-align: center;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_false {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  width: 50%;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_false .result_icon {
+  color: #FF7768;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_false .result_icon i {
+  font-size: 20px;
+  margin-right: 0.25rem;
+  margin-top: 0.1rem;
+  margin-left: 1.17rem;
+}
+.records .records_container .item .records_group .records_list .list_cen .list_result .result_false .text {
+  font-size: 0.6rem;
+  color: #999999;
+  letter-spacing: 0;
+  text-align: center;
+}
+.records .records_container .item .records_group .records_list .list_right {
+  float: right;
+  border-radius: 2.5rem;
+  width: 3.75rem;
+  height: 1.5rem;
+  background: #fff;
+  border: 1px solid #0CB7F5;
+  font-size: 0.6rem;
+  color: #0CB7F5;
+  line-height: 1.5rem;
+  text-align: center;
+  margin-top: 0.45rem;
+}
+.records .records_container .records_btn {
+  margin: 0 auto;
+  width: 17.25rem;
+  line-height: 2rem;
+  background: #0CB7F5!important;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  color: #FFFFFF;
+  text-align: center;
+}
+.records .records_container .records_btn a {
+  background: #0CB7F5!important;
+}
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
+}
+
+/*# sourceMappingURL=records.css.map */

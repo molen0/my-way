@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="''+${'详情'}"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" >
+                        <input type="hidden" name="id" id="id" th:value="${courseFeedback.id}" />
+                        <input type="hidden" name="courseId" id="courseId" th:value="${courseFeedback.courseId}" />
+
+                      <div class="form-group">
+                        <label for="courseName" class="col-sm-2 control-label">课程</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="courseName" class="form-control" id="courseName" readonly="true" th:value="${courseName}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="courseType" class="col-sm-2 control-label">课程类型</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="courseType" class="form-control" id="courseType" readonly="true" th:value="${courseType}" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="doctorName" class="col-sm-2 control-label">医生</label>
+                        <div class="col-sm-10">                                                  <!--  #strings.isEmpty(doctor.name)?'hidden':''-->
+                            <input type="text" name="doctorName" class="form-control" id="doctorName" readonly="true" th:value="${doctorName}" />
+                        </div>
+                    </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-2 control-label">手机</label>
+                            <div class="col-sm-10">                                                  <!--  #strings.isEmpty(doctor.name)?'hidden':''-->
+                                <input type="text" name="phone" class="form-control" id="phone" readonly="true" th:value="${phone}" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="createTime" class="col-sm-2 control-label">反馈时间</label>
+                            <div class="col-sm-10">                                                  <!--  #strings.isEmpty(doctor.name)?'hidden':''-->
+                                <input type="text" name="createTime" class="form-control" id="createTime" readonly="true" th:value="${createTime}" />
+                            </div>
+                        </div>
+
+                        <!--      <div class="form-group">
+                                  <label for="content" class="col-sm-2 control-label">反馈内容</label>
+                                  <div class="col-sm-10">
+                                      <input type="text" name="content" class="form-control" id="content"  th:value="${courseFeedback.content}" />
+                                  </div>
+                              </div>-->
+
+                        <div class="form-group">
+                            <label for="content" class="col-sm-2 control-label">反馈内容</label>
+                            <div class="col-sm-10">
+                                <textarea name="content" class="form-control" id="content" readonly="true" th:text="${courseFeedback.content}" maxlength="500" rows="10"></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="reply" class="col-sm-2 control-label">回复内容</label>
+                            <div class="col-sm-10">
+                                <textarea name="reply" class="form-control" id="reply" readonly="true"  th:text="${courseFeedback.reply}" maxlength="500" rows="10"></textarea>
+                            </div>
+                        </div>
+
+                  <!--      <div class="form-group">
+                            <label for="reply" class="col-sm-2 control-label">回复内容</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="reply" class="form-control" id="reply"  th:value="${courseFeedback.reply}" />
+                            </div>
+                        </div>-->
+
+
+                        <div class="form-group">
+
+                            <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* reset  */
+body,button,input,select,textarea{font:14px/1.5 Tahoma,Helvetica,"Microsoft YaHei",Arial,sans-serif;}
+body,h1,h2,h3,h4,h5,h6,dl,dt,dd,ul,ol,li,th,td,p,blockquote,pre,form,fieldset,legend,input,button,textarea,article,aside,footer,header,hgroup,nav,section,menu{margin:0;padding:0;}
+table{border-collapse:collapse;border-spacing:0;}
+li{list-style:none;}
+fieldset,img{border:0;vertical-align:middle;}
+input,textarea{outline-style:none;}
+textarea{resize:none;}
+article,aside,footer,header,hgroup,nav,section,menu{display:block;}
+address,caption,cite,code,dfn,em,i,th,var,b,strong{font-style:normal;font-weight:400;}
+
+h1,h2,h3,h4,h5,h6{
+	font-weight: normal;
+}
+html{
+	height: 100%;
+}
+body{
+	height: 100%;
+}
+
+img{
+	display: block;
+}
+::-webkit-input-placeholder{opacity: 0.2;}
+::-ms-input-placeholder{opacity: 0.2;}
+::-moz-placeholder{opacity: 0.2;}
+body{font-family:'PingFangSC-Regular', sans-serif,"微软雅黑", "Helvetica Neue", Helvetica, sans-serif, Helvetica-Bold!important;}

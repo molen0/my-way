@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>学分管理</h1>
+    <small>列表管理</small>
+</section>
+<section class="content table-content">
+    <table id="dataGrid"></table>
+</section>
+<div id="toolbar">
+    <!--<a th:href="@{/api/craditBoot/from}" id="add" class="btn btn-primary">添加学分证书模板</a>-->
+</div>
+<div th:include="footer"></div>
+</body>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#dataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "医生属性", field: "semesterId",formatter: shuxingFormatter },
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime"},
+                {title: "操作", field: "operate", align: 'center',events: operateEvents,  formatter: operateFormatter1}
+            ],
+            url : basePath+'/api/craditBoot/list',
+            queryParams: function(params){
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res);
+                return {
+                    rows : res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalPages
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : false,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20,  50, 100],
+            toolbar : "#toolbar",
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+
+    $("#search").click(function (){
+        $('#dataGrid').bootstrapTable('refresh',null);
+    });
+
+    function shuxingFormatter(value, row, index) {
+        switch (value){
+            case 0:
+                return "乡村医生";
+            case 1:
+                return "全科医生";
+
+        }
+    }
+
+    function operateFormatter1(value, row, index) {
+                return [
+                    '<a href="'+basePath+'/api/craditBoot/from?id='+row.id+'" >',
+                    '<i class="glyphicon glyphicon-edit"></i>修改',
+                    '</a>  '
+//                    '<a class="remove" href="javascript:void(0);">',
+//                    '<i class="glyphicon glyphicon-remove"></i>删除',
+//                    '</a>'
+                ].join('');
+    }
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/craditBoot/delete?id='+row.id, 'id');
+        },
+    };
+</script>
+</html>

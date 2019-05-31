@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>课程管理</h1>
+    <small onclick="doSpecialist()">课程列表</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-8 col-md-offset-2">
+            <div class="col-sm-4">
+                <input type="text" th:value="${ctitle}" name="ctitle" id="ctitle"  class="form-control"  placeholder="课程名称" maxlength="20"/>
+            </div>
+            <div class="col-sm-3">
+                <input type="text" th:value="${cspecialist}" name="cspecialist" id="cspecialist"  class="form-control"  placeholder="授课专家" maxlength="8"/>
+            </div>
+            <div class="col-sm-3">
+                <select name="ccourseAttr" id="ccourseAttr" class="form-control" >
+                    <option  value="">--请选择课程属性--</option>
+                    <option th:selected="${#strings.equals(ccourseAttr, 0)}" value="0" >乡村医生</option>
+                    <option th:selected="${#strings.equals(ccourseAttr, 1)}" value="1" >全科医生</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <select name="ccourseType" id="ccourseType" class="form-control" >
+                    <option  value="">--请选择课程类型--</option>
+                    <option th:selected="${#strings.equals(ccourseType, 1)}" value="1" >必学课程</option>
+                    <option th:selected="${#strings.equals(ccourseType, 2)}" value="2" >知识学习</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <input type="hidden" th:value="${csemesterId}" id="csemesterId"/>
+                <select name="semester" id="semester" class="form-control" >
+                    <option  value="">--请选择学期--</option>
+                </select>
+            </div>
+            <div class="col-sm-1">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <div id="toolbar">
+        <a th:href="@{/api/course/from}" class="btn btn-primary" >添加课程</a>
+    </div>
+    <table id="courseGrid"></table>
+</section>
+
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#courseGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {
+                    title: "序号",
+                    field: "id",
+                    align:"center",
+                    formatter: function (value, row, index) {
+                        return index+1;
+                    }
+                },
+                {
+                    title: "课程名称",
+                    field: "title",
+                    align:"center"
+                },
+                {
+                    title: "课程类型",
+                    field: "courseType",
+                    align:"center",
+                    formatter :getType
+                },
+                {
+                    title: "课程属性",
+                    field: "courseAttr",
+                    align:"center",
+                    formatter :getProperty
+                },
+                {
+                    title: "课程章数",
+                    field: "chapterCount",
+                    align:"center"
+                },
+                {
+                    title: "学习人数",
+                    align:"center",
+                    field: "studyNum"
+                },
+                {
+                    title: "授课专家",
+                    align:"center",
+                    field: "specialist"
+                },
+                {
+                    title: "学期",
+                    align:"center",
+                    field: "semesterName"
+                },
+                {
+                    title: "是否考试",
+                    field: "isOpen",
+                    align:"center",
+                    formatter :getIsOpen
+                },
+                {
+                    title: "课程图片",
+                    field: "photo",
+                    align:"center",
+                    formatter:function(value,row,index){
+                        return "<img src="+row.photo+" width='94px' height='63px'/>";
+                    }
+                },
+                //{title: "类型", field: "type",formatter : tableModel.getTagType},
+                {
+                    title: "创建时间",
+                    field: "createTime",
+                    align:"center"
+                },
+                {
+                    title: "更新时间",
+                    field: "updateTime",
+                    align:"center"
+                },
+                {
+                    title: "操作",
+                    field: "operate",
+                    align: 'center',
+                    events: operateEvents,
+                    align:"center",
+                    formatter: operateFormatter
+                }
+            ],
+            url : basePath+'/api/course/list',
+            queryParams: function(params){
+                params['title']=$("#ctitle").val();
+                params['courseAttr']=$("#ccourseAttr").val();
+                params['courseType']=$("#ccourseType").val();
+                params['specialist']=$("#cspecialist").val();
+                var semesterId =$("#semester").val();
+                var csemesterId =$("#csemesterId").val();
+                if(csemesterId!=null&&csemesterId!=""){
+                    semesterId = csemesterId;
+                }
+                params['semesterId']=semesterId;
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res.result.pageInfo.totalElements)
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+
+    function getProperty   (value,row,index) {
+        return value==0 ? "乡村医生" : "全科医生";
+    }
+
+    function getType   (value,row,index) {
+        return value==1 ? "必学课程" : "知识学习";
+    }
+    function getIsOpen   (value,row,index) {
+        return value==0 ? "否" : "是";
+    }
+
+    $("#search").click(function (){
+        $('#courseGrid').bootstrapTable('refresh',null);
+    });
+
+    $("#semester").change(function(){
+        $("#csemesterId").val("");
+    });
+
+    //新增讲师名字段处理
+    function doSpecialist(){
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/course/doSpecialist",
+            dataType: "json",
+            success: function(data){
+            }
+        });
+    }
+
+    function operateFormatter(value, row, index) {
+        var ctitle = $("#ctitle").val();
+        var cspecialist = $("#cspecialist").val();
+        var ccourseAttr = $("#ccourseAttr").val();
+        var ccourseType = $("#ccourseType").val();
+        var csemesterId = $("#semester").val();
+        return [
+            '<a href="'+basePath+'/api/course/from?id='+row.id+'&ctitle='+ctitle+'&cspecialist='+cspecialist+'&ccourseAttr='+ccourseAttr+'&ccourseType='+ccourseType+'&csemesterId='+csemesterId+'" >',
+             '<i class="glyphicon glyphicon-edit"></i>修改',
+             '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/course/delete', 'id');
+        }
+    };
+    $(function(){
+        var semesterId = $("#csemesterId").val();
+        $.ajax({
+            type: "GET",
+            url: basePath+"/api/course/getSemester",
+            dataType: "json",
+            success: function(data){
+                var html = "";
+                var list = data.result.content;
+                for(var i=0;i<list.length;i++){
+                    if(semesterId ==list[i].id){
+                        html += '<option value="'+list[i].id+'" selected="true">'+list[i].name+'</option>';
+                    }else{
+                        html += '<option value="'+list[i].id+'">'+list[i].name+'</option>';
+                    }
+                }
+                $("#semester").append(html);
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

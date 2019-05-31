@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>标签管理</h1>
+    <small>标签管理</small>
+</section>
+<div id="toolbar">
+    <a th:href="@{/api/evaluateTag/from}" class="btn btn-primary" >添加标签</a>
+</div>
+<section class="content table-content">
+
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <input type="text"  name="content" class="form-control" id="content"  placeholder="内容" />
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="evadataGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#evadataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: '序号',align: 'center',
+                    switchable:false,
+                    formatter:function(value,row,index){
+                        //return index+1; //序号正序排序从1开始
+                        var pageSize=$('#evadataGrid').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+                        var pageNumber=$('#evadataGrid').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+                        return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+                    }
+                },
+                {title: "内容", field: "content" },
+                {title: "类型", field: "type",formatter :getTagType},
+                {title: "创建时间", field: "createTime", sortable: false},
+                {title: "更新日期", field: "updateTime", sortable: false},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url : basePath+'/api/evaluateTag/list',
+            queryParams: function(params){
+                params['content']=$("#content").val();
+                console.log(params['content']);
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res.result.pageInfo.totalElements)
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    function getTagType   (value,row,index) {
+        let type=row.type;
+        if(type==0){
+            return "视频印象";
+        }else{
+            return "期待上的课程";
+        }
+    }
+
+    function getDateFormat   (value,row,index) {
+        return value==1 ? "视频印象" : "期待上的课程";
+    }
+    $("#search").click(function (){
+        $('#evadataGrid').bootstrapTable('refresh',null);
+    });
+    function operateFormatter(value, row, index) {
+        return [
+            '<a href="'+basePath+'/api/evaluateTag/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/evaluateTag/delete', 'id');
+        }
+    };
+</script>
+</body>
+
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>课程大纲管理</h1>
+    <small>课程大纲管理</small>
+</section>
+<div id="toolbar">
+    <a th:href="@{/api/courseOutline/from}" class="btn btn-primary" >添加课程大纲</a>
+</div>
+<!--<div class="pull-left search">
+    章节名称：<input th:type="text" name="name">
+    课程名称：<input th:type="text" name="title">
+</div>-->
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-6 col-md-offset-3">
+            <div class="col-sm-5">
+                <input type="text"  name="name" class="form-control" id="name"  placeholder="大纲名称" />
+            </div>
+            <div class="col-sm-3">
+                <input type="text"  name="specialistName" class="form-control" id="specialistName"  placeholder="授课专家" />
+            </div>
+            <div class="col-sm-4">
+                <select name="courseAttr" id="courseAttr" class="form-control" >
+                    <option  value="">--请选择课程属性型--</option>
+                    <option value="0" >乡村医生</option>
+                    <option value="1" >全科医生</option>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="courseOutlineGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#courseOutlineGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "课程名称", field: "course.title" },
+                {title: "章节名称", field: "name" },
+                {title: "课程属性", field: "course.courseAttr",formatter :getCourseAttr},
+                {title: "授课专家", field: "specialistName" },
+                {title: "顺序", field: "sort" },
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime"},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url : basePath+'/api/courseOutline/list',
+            queryParams: function(params){
+                params['name']=$("#name").val();
+                params['courseAttr']=$("#courseAttr").val();
+                params['specialistName']=$("#specialistName").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                //debugger;
+                console.log(res)
+                return {
+                    rows :  res.result.pageInfo.datas,
+                    total : res.result.pageInfo.totalCount
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+
+    function getCourseAttr   (value,row,index) {
+        let type=row.course.courseAttr;
+        if(type==0){
+            return "乡村医生";
+        }else if(type == 1){
+            return "全科医生";
+        }
+    }
+
+    $("#search").click(function (){
+        $('#courseOutlineGrid').bootstrapTable('refresh',null);
+    });
+
+    function operateFormatter(value, row, index) {
+        return [
+            '<a href="'+basePath+'/api/courseOutline/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/courseOutline/delete', 'id');
+        }
+    };
+</script>
+</body>
+</html>

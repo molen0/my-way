@@ -1,0 +1,276 @@
+/**
+ * flex.less - flex布局
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+/**
+ * _mixins.less - Less混合 - 摘自Framework7
+ * Author: Xiaxs(xiaxiansheng@adinnet.cn)
+ **/
+.img-responsive {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.floatL {
+  float: left;
+}
+.floatR {
+  float: right;
+}
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+}
+.common_header {
+  width: 100%;
+  height: 2.5rem;
+  background: -webkit-linear-gradient(338deg, #5CD3FC 7%, #42A3FC 96%);
+  background: linear-gradient(-248deg, #5CD3FC 7%, #42A3FC 96%);
+  line-height: 2.5rem;
+  color: #ffffff;
+  position: fixed;
+  left: 0px;
+  top: 0;
+  z-index: 10000000;
+}
+.common_header:before,
+.common_header:after {
+  content: " ";
+  display: table;
+}
+.common_header:after {
+  clear: both;
+}
+.common_header .title {
+  width: 100%;
+  font-size: 0.9rem;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.common_header > i {
+  padding-left: 0.75rem;
+  font-size: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 10000;
+}
+.view_credits_con {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: url("../images/view_credits_bg.png") no-repeat left top;
+  background-size: cover;
+  position: relative;
+}
+.view_credits_con .view_credits_con_box {
+  width: 15.75rem;
+  height: 18.825rem;
+  padding: 7.1rem 0.75rem 0;
+  background: url("../images/view_kuang.png") no-repeat left top;
+  background-size: cover;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+          transform: translate3d(-50%, -50%, 0);
+}
+.view_credits_con .view_credits_con_box h2 {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #FFFFFF;
+  margin-bottom: 0.2rem;
+}
+.view_credits_con .view_credits_con_box > p {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #FFFFFF;
+  margin-bottom: 2.225rem;
+}
+.view_credits_con .view_credits_con_box .doctor_name {
+  font-size: 0.75rem;
+  color: #333333;
+}
+.view_credits_con .view_credits_con_box .doctor_name span {
+  margin-right: 0.5rem;
+}
+.view_credits_con .view_credits_con_box .prove_con {
+  font-size: 0.7rem;
+  color: #666666;
+  text-align: justify;
+}
+.view_credits_con .view_credits_con_box .score_box {
+  font-size: 0.7rem;
+  color: #333333;
+  margin-top: 0.525rem;
+}
+.view_credits_con .view_credits_con_box .score_box:before,
+.view_credits_con .view_credits_con_box .score_box:after {
+  content: " ";
+  display: table;
+}
+.view_credits_con .view_credits_con_box .score_box:after {
+  clear: both;
+}
+.view_credits_con .view_credits_con_box .score_box > p:nth-child(1) {
+  float: left;
+}
+.view_credits_con .view_credits_con_box .score_box > p:nth-child(1) span {
+  font-size: 0.7rem;
+  color: #0CB7F5 ;
+  line-height: 1rem;
+  margin: 0 0.2rem;
+}
+.view_credits_con .view_credits_con_box .score_box > p:last-child {
+  float: right;
+}
+.view_credits_con .view_credits_con_box .unit_con {
+  width: -webkit-calc(100% - 0.875rem);
+  width: calc(100% - 0.875rem);
+  padding-right: 0.875rem;
+  font-size: 0.6rem;
+  color: #666666;
+  margin-top: 1.625rem;
+  position: absolute;
+  left: 0;
+  bottom: 3.275rem;
+  z-index: 99999;
+}
+.view_credits_con .view_credits_con_box .unit_con:before,
+.view_credits_con .view_credits_con_box .unit_con:after {
+  content: " ";
+  display: table;
+}
+.view_credits_con .view_credits_con_box .unit_con:after {
+  clear: both;
+}
+.view_credits_con .view_credits_con_box .unit_con > p {
+  text-align: right;
+}
+.view_credits_con .view_credits_con_box .unit_con > p:first-child {
+  margin-bottom: 0.175rem;
+}
+.view_credits_con .view_credits_con_box .issue_time {
+  width: -webkit-calc(100% - 0.875rem);
+  width: calc(100% - 0.875rem);
+  padding-right: 0.875rem;
+  text-align: right;
+  font-size: 0.6rem;
+  color: #000;
+  margin-top: 0.5rem;
+  z-index: 999999;
+  position: absolute;
+  left: 0;
+  bottom: 0.4rem;
+}
+.view_credits_con .view_credits_con_box .seal_num {
+  width: 4.875rem;
+  height: 4.875rem;
+  position: absolute;
+  bottom: 0.225rem;
+  right: 5.7rem;
+  background: transparent!important;
+}
+.view_credits_con .view_credits_con_box .adjust {
+  right: 0.925rem;
+  background: transparent!important;
+}
+@media screen and (min-width: 320px) {
+  .view_credits_con .view_credits_con_box {
+    width: 13.25rem;
+    height: 18.825rem;
+    padding: 6.1rem 0.75rem 0;
+    background: url(../images/view_kuang.png) no-repeat left top;
+    background-size: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(-50%, -50%, 0);
+  }
+  .view_credits_con .view_credits_con_box h2 {
+    font-size: 0.8rem;
+  }
+  .view_credits_con .view_credits_con_box > p {
+    margin-bottom: 1.525rem;
+  }
+  .view_credits_con .view_credits_con_box .prove_con {
+    font-size: 0.6rem;
+  }
+  .view_credits_con .view_credits_con_box .unit_con {
+    font-size: 0.5rem;
+  }
+  .view_credits_con .view_credits_con_box .unit_con {
+    bottom: 5.275rem;
+  }
+  .view_credits_con .view_credits_con_box .issue_time {
+    bottom: 3rem;
+  }
+  .view_credits_con .view_credits_con_box .seal_num {
+    bottom: 3.225rem;
+  }
+  .margin_bottom {
+    margin-bottom: 1.9rem;
+  }
+}
+@media screen and (min-width: 360px) {
+  .view_credits_con .view_credits_con_box {
+    width: 14.75rem;
+    height: 15.825rem;
+    padding: 6.1rem 0.75rem 0;
+    background: url(../images/view_kuang.png) no-repeat left top;
+    background-size: cover;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(-50%, -50%, 0);
+  }
+  .view_credits_con .view_credits_con_box h2 {
+    font-size: 0.8rem;
+  }
+}
+@media screen and (min-width: 375px) {
+  .view_credits_con .view_credits_con_box {
+    width: 15.75rem;
+    height: 18.825rem;
+    padding: 7.1rem 0.75rem 0;
+    background: url(../images/view_kuang.png) no-repeat left top;
+    background-size: cover;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate3d(-50%, -50%, 0);
+    transform: translate3d(-50%, -50%, 0);
+  }
+  .view_credits_con .view_credits_con_box h2 {
+    font-size: 0.8rem;
+  }
+  .view_credits_con .view_credits_con_box > p {
+    margin-bottom: 2.225rem;
+  }
+  .view_credits_con .view_credits_con_box .prove_con {
+    font-size: 0.7rem;
+  }
+  .view_credits_con .view_credits_con_box .unit_con {
+    font-size: 0.6rem;
+  }
+  .view_credits_con .view_credits_con_box .unit_con {
+    bottom: 3.275rem;
+  }
+  .view_credits_con .view_credits_con_box .issue_time {
+    bottom: 0.4rem;
+  }
+  .view_credits_con .view_credits_con_box .seal_num {
+    bottom: 0.225rem;
+  }
+  .margin_bottom {
+    margin-bottom: 2.4rem;
+  }
+}
+
+/*# sourceMappingURL=view_credits.css.map */

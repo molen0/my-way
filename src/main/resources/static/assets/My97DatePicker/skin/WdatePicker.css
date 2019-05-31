@@ -1,0 +1,9 @@
+.Wdate{
+	background:#fff url(/public/plugin/My97DatePicker/skin/datePicker.gif) no-repeat right;
+}
+.Wdate::-ms-clear{display:none;}
+
+.WdateFmtErr{
+	font-weight:bold;
+	color:red;
+}

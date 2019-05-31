@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="'模板'+${#strings.isEmpty(creaditBook.id)?'添加':'修改'}"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" th:attr="action=@{/api/craditBoot/save}" method="post">
+                        <input type="hidden" name="id" th:value="${creaditBook.id}" />
+                        <input type="hidden" name="createTime" th:value="${creaditBook.createTime}" />
+                        <div class="form-group">
+                            <label for="lx" class="col-sm-2 control-label">医生属性</label>
+                            <div class="col-sm-10">
+                                <input type="text"   name="lx"  class="form-control" maxlength="50" readonly id="lx" th:value="${#strings.equals(creaditBook.semesterId,1) ? '全科医生':'乡村医生'}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="headlines" class="col-sm-2 control-label">大标题</label>
+                            <div class="col-sm-10">
+                                <input type="text"   name="headlines"  class="form-control" maxlength="50"  id="headlines" th:value="${creaditBook.headlines}"/>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label for="semesterTitle" class="col-sm-2 control-label">小标题</label>-->
+                            <!--<div class="col-sm-10">-->
+                                <!--<input type="text"   name="semesterTitle"  class="form-control" maxlength="50"  id="semesterTitle" th:value="${creaditBook.semesterTitle}"/>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <label for="proveCon" class="col-sm-2 control-label">内容</label>
+                            <div class="col-sm-10">
+                                <textarea rows="5" name="proveCon" id="proveCon" class="form-control" maxlength="400" required="required"  th:text="${creaditBook.proveCon}"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="creaditName" class="col-sm-2 control-label">学分名称</label>
+                            <div class="col-sm-10">
+                                <input type="text"   name="creaditName"  class="form-control" maxlength="50"  id="creaditName" th:value="${creaditBook.creaditName}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hospital1" class="col-sm-2 control-label">单位一</label>
+                            <div class="col-sm-10">
+                                <input type="text"   name="hospital1"  class="form-control" id="hospital1" th:value="${creaditBook.hospital1}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hospital2" class="col-sm-2 control-label">单位二</label>
+                            <div class="col-sm-10">
+                                <input type="text"   name="hospital2"  class="form-control" id="hospital2" th:value="${creaditBook.hospital2}"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="chapter1" class="col-sm-2 control-label">印章一</label>
+                            <div class="col-sm-10">
+                                <img id="chapter1-preview" onclick="$('#chapter1').click()" th:src="${#strings.isEmpty(creaditBook.chapter1)?'/assets/adminlte-2.3.7/img/black.png':creaditBook.chapter1}"   style="width: 100px; height: 100px;" />
+                                <input type="file"  id="chapter1"  style="display:none" onChange="show('chapter1')"/>
+                                <input type="hidden" class="vals" name="chapter1" id="chapter1-val"  th:value="${creaditBook.chapter1}" />
+                                <a href="javascript:void(0);" class="pic">移除</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="chapter2" class="col-sm-2 control-label">印章二</label>
+                            <div class="col-sm-10">
+                                <img id="chapter2-preview" onclick="$('#chapter2').click()" th:src="${#strings.isEmpty(creaditBook.chapter2)?'/assets/adminlte-2.3.7/img/black.png':creaditBook.chapter2}"   style="width: 100px; height: 100px;" />
+                                <input type="file"  id="chapter2"  style="display:none" onChange="show('chapter2')"/>
+                                <input type="hidden" class="vals" name="chapter2" id="chapter2-val"  th:value="${creaditBook.chapter2}" />
+                                 <a href="javascript:void(0);" class="pic">移除</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="issueDate" class="col-sm-2 control-label">时间</label>
+                            <div class="col-sm-10">
+                                <input type="text"   required="required" th:value="${creaditBook.issueDate}" name="issueDate"  class="form-control" id="issueDate" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4 pull-left">
+                                <button type="submit" class="btn btn-primary js-ajax-submit">提交</button>
+                            </div>
+                            <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    function show (value){
+        var file_obj = document.getElementById(value).files[0];
+        var fd = new FormData();
+        fd.append('file', file_obj);
+        fd.append('remotePath', "yinzhang");
+        $.ajax({
+            type: 'post',
+            url: basePath+"/api/upload/qiniuUpload",
+            data: fd,
+            cache: false,
+            processData: false,
+            contentType: false,
+        }).success(function (data) {
+           console.log(value);
+            if(data.status == '1'){
+              $("#"+value+"-val").val(data.msg);
+                $("#"+value+"-preview").attr("src",data.msg);
+            }
+            console.log(data);
+        }).error(function () {
+            alert("上传失败");
+        });
+
+    };
+    $(".pic").click(function () {
+        $(this).closest(".col-sm-10").find("img").attr("src",'/assets/adminlte-2.3.7/img/black.png');
+        $(this).closest(".col-sm-10").find(".vals").val('');
+    });
+</script>
+</body>
+</html>

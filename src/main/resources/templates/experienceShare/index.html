@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>经验分享</h1>
+    <small>经验分享</small>
+</section>
+<section class="content table-content">
+    <div class="box-body ">
+        <div class="form-group col-md-8 col-md-offset-2">
+            <div class="col-sm-3">
+                <input type="text"  name="title" class="form-control" id="title"  placeholder="标题" />
+            </div>
+            <div class="col-sm-3">
+                <select name="type" id="type" class="form-control">
+                    <option  value="">--请选择类型--</option>
+                    <option value="1" >政府部门</option>
+                    <option value="2" >医疗机构</option>
+                    <option value="3" >居民经验</option>
+                </select>
+            </div>
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <div id="toolbar">
+        <a th:href="@{/api/experienceShare/from}" class="btn btn-primary" >添加经验分享</a>
+    </div>
+    <table id="experienceShareGrid"></table>
+</section>
+
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#experienceShareGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {title: "序号", field: "number" ,formatter: function (value, row, index) {
+                    return index+1;
+                }},
+                {title: "标题", field: "title" },
+                {
+                    title: "图片",
+                    field: "photo",
+                    align:"center",
+                    formatter:function(value,row,index){
+                        return "<img src="+row.photo+" width='100px' height='50px'/>";
+                    }
+                },
+                {title: "医院", field: "hospital" },
+                {title: "类型", field: "type",formatter :getTagType},
+                {title: "PDF预览", field: "show", align: 'center',events: showEvents, formatter: show1},
+                {title: "创建时间", field: "createTime"},
+                {title: "更新日期", field: "updateTime"},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url : basePath+'/api/experienceShare/list',
+            queryParams: function(params){
+                params['title']=$("#title").val();
+                params['type']=$("#type").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 10,
+            pageList : [10, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    function getTagType   (value,row,index) {
+        if(value == 1){
+            return "政府部门";
+        }else if(value == 2){
+            return "医疗机构";
+        }else if(value == 3){
+            return "居民经验";
+        }
+    }
+
+    function getDateFormat   (value,row,index) {
+        if(value == 1){
+            return "政府部门";
+        }else if(value == 2){
+            return "医疗机构";
+        }else if(value == 3){
+            return "居民经验";
+        }
+    }
+
+    function show1(value, row, index) {
+        return [
+            '<a class="show" href="javascript:void(0);" download="">',
+            '<i class="glyphicon "></i>预览/下载',
+            '</a>'
+
+        ].join('');
+    }
+    $("#search").click(function (){
+        $('#experienceShareGrid').bootstrapTable('refresh',null);
+    });
+    function operateFormatter(value, row, index) {
+        return [
+            '<a href="'+basePath+'/api/experienceShare/from?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>修改',
+            '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/experienceShare/delete', 'id');
+        }
+    };
+
+    window.showEvents = {
+
+        'click .show' : function (e, value, row, index) {
+
+            layer.open({
+                type: 2,
+                title: 'PDF图片',
+                shadeClose: true,
+                shade: false,
+                maxmin: true, //开启最大化最小化按钮
+                area: ['100%', '100%'],
+                content: ""+row.filePath+""
+                // $("#info").html()
+            });
+            layer.ready(function(){ //为了layer.ext.js加载完毕再执行
+                layer.photos({
+                    photos: '#layer-photos-demo'
+                    ,shift: 5 //0-6的选择，指定弹出图片动画类型，默认随机
+                });
+            });
+
+        }
+    };
+</script>
+</body>
+
+</html>

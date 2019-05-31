@@ -1,0 +1,115 @@
+
+##########################################################
+##################  所有profile共有的配置  #################
+##########################################################
+
+###################  spring配置  ###################
+spring:
+  profiles:
+    active: dev
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        new_generator_mappings: false
+        format_sql: true
+  mvc:
+    view:
+      prefix : "classpath:/templates/"
+      suffix : ".html"
+    date-format : "yyyy-MM-dd HH:mm:ss"
+    #槿板配置
+  thymeleaf:
+      mode : "HTML5"
+      cache : false
+      encoding : "UTF-8"
+      servlet:
+        content-type: "text/html"
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+server:
+  port: 8000
+
+##ueditor文件上传配置JSON
+ueditor:
+  config:
+    json:
+      path : "static/assets/ueditor/config.json"
+shiro:
+  session:
+    #shiro session前缀
+    session-prefix : "shiro-session"
+    #shiro session 分钟
+    session-time : 10
+  cache:
+      #shiro缓存前缀
+    cache-prefix : "shiro-redis-cache"
+      #shiro缓存(分钟)
+    cache-time : 180
+---
+
+#####################################################################
+########################  生产环境profile  ##########################
+#####################################################################
+spring:
+  profiles: dev
+  datasource:
+      url: jdbc:mysql://172.19.13.31:5500/yunqueyi?serverTimezone=GMT%2B8&useSSL=true
+      username: yunqueyi
+      password: 9gcNY6q7
+       #MVC配置
+  mvc:
+    view:
+      prefix : "classpath:/templates/"
+      suffix : ".html"
+    date-format : "yyyy-MM-dd HH:mm:ss"
+    #槿板配置
+  thymeleaf:
+      mode : "HTML5"
+      cache : false
+      encoding : "UTF-8"
+      servlet:
+        content-type: "text/html"
+logging:
+  level:
+    ROOT: INFO
+    com:
+      xncoding: DEBUG
+  file: "logs/spring-boot-logging.log"
+
+---
+
+#####################################################################
+########################  测试环境profile  ##########################
+#####################################################################
+
+spring:
+  profiles: test
+  datasource:
+      url: jdbc:mysql://10.1.64.80:9034/yunqueyi?useSSL=false&autoReconnect=true&tinyInt1isBit=false&useUnicode=true&characterEncoding=utf8
+      username: healthcloud
+      password: healthcloud123456
+  servlet:
+    multipart:
+      max-file-size: 100Mb
+  http:
+    multipart:
+      max-request-size: 100Mb
+
+spring.http.multipart.max-file-size: 2000Mb
+spring.http.multipart.max-request-size: 2500Mb
+
+qiniu:
+      accessKey: kUCOKS5T5i6ygr-5i7MoqimI-EDl5OegkKwkxctw
+      secretKey: q7p2Oyx56blsuh73Y8n-6Geg-y4dUSzKtix_lpPk
+      bucket: healthcloud-study
+      prefix: https://study.wdjky.com.qiniudns.com
+
+
+
+
+
+
+

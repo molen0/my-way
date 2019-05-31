@@ -1,0 +1,216 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:include="header">
+</head>
+<body>
+<section class="content-header">
+    <h1>反馈管理</h1>
+    <small>反馈管理</small>
+</section>
+<div id="toolbar">
+    <a  class="btn btn-primary" id="delsFeed">刪除</a>
+</div>
+<section class="content table-content">
+
+    <div class="box-body ">
+        <!--<div class="form-group col-md-6 col-md-offset-3">-->
+            <div class="form-group col-md-8 col-md-offset-2">
+
+             <div class="col-sm-3">
+                <input type="text"  name="courseName" class="form-control" id="courseName"  placeholder="课程" />
+             </div>
+
+             <div class="col-sm-3">
+                    <select name="courseType" id="courseType" class="form-control" >
+                        <option  value="">--请选择课程类型--</option>
+                        <option value="1" >必学课程</option>
+                        <option value="2" >知识学习</option>
+                        <option value="3" >经验分享</option>
+                    </select>
+              </div>
+
+            <div class="col-sm-3">
+                    <input type="text"  name="doctorName" class="form-control" id="doctorName"  placeholder="反馈医生" />
+             </div>
+
+            <div class="col-sm-3">
+                <input type="text"  name="content" class="form-control" id="content"  placeholder="反馈内容" />
+            </div>
+
+            <div class=" col-sm-2">
+                <button type="button" id="search"  class="btn btn-default js-ajax-submit">搜索</button>
+            </div>
+        </div>
+    </div>
+    <table id="feeddataGrid"></table>
+</section>
+<div th:include="footer"></div>
+
+
+<script type="text/javascript" th:inline="javascript">
+    var basePath = [[${#httpServletRequest.getScheme() + "s://" + #httpServletRequest.getServerName() + #httpServletRequest.getContextPath()}]];
+    $table = $("#feeddataGrid");
+    $(function () {
+        initDataGrid();
+    });
+    function initDataGrid(){
+        $table.bootstrapTable({
+            height : tableModel.getHeight(),
+            idField : "id",
+            columns : [
+                {field: 'checkStatus',checkbox: true}, 	//给多选框赋一个field值为“checkStatus”用于更改选择状态!!!!!
+                {field: 'id',visible:false},
+                {title: '序号',align: 'center',
+                    switchable:false,
+                    formatter:function(value,row,index){
+                        //return index+1; //序号正序排序从1开始
+                        var pageSize=$('#feeddataGrid').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+                        var pageNumber=$('#feeddataGrid').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+                        return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+                    }
+                },
+                {title: "课程", field: "courseName" },
+                {title: "课程类型", field: "courseType",formatter : getCourseType},
+                {title: "反馈医生", field: "doctorName" },
+                {title: "反馈内容", field: "content",width:400 },
+                {title: "反馈图片",field:"path",formatter : getPicPath},
+                {title: "回复内容", field: "reply" ,width:400},
+                {title: "创建时间", field: "createTime", sortable: false},
+                {title: "更新日期", field: "updateTime", sortable: false},
+                {title: "操作", field: "operate", align: 'center', events: operateEvents, formatter: operateFormatter}
+            ],
+            url : basePath+'/api/courseFeedback/list2',
+            queryParams: function(params){
+                params['content']=$("#content").val();
+                params['courseType']=$("#courseType").val();
+                params['doctorName']=$("#doctorName").val();
+                params['courseName']=$("#courseName").val();
+                return params;
+            },
+            responseHandler : function (res) {
+                console.log(res.result.pageInfo.totalElements)
+                return {
+                    rows :  res.result.pageInfo.content,
+                    total : res.result.pageInfo.totalElements
+
+                }
+            },
+            search : false,
+            searchOnEnterKey : true,
+            sortName : 'createTime',
+            sortOrder : 'asc',
+            pagination : true,
+            sidePagination : 'server',
+            pageSize: 20,
+            pageList : [20, 40, 50, 100],
+            showRefresh : true,
+            showToggle : true
+        });
+    }
+    $("#search").click(function (){
+        $('#feeddataGrid').bootstrapTable('refresh',null);
+    });
+
+   $("#delsFeed").click(function(){//批量删除
+        var rows= $("#feeddataGrid").bootstrapTable('getSelections');
+        if(rows.length<=0){
+            alert("请选择一行!");
+            return;
+        }else {
+            var ids = '';
+            for (var i = 0; i < rows.length; i++) {
+                ids += rows[i]['id'] + ",";
+            }
+            ids = ids.substring(0, ids.length - 1);
+            var rowid=ids;
+            var id='id';
+            var url=basePath+'/api/courseFeedback/delete';
+            layer.confirm('确定删除吗?', function(){
+                $.getJSON(url, {ids:rowid}, function(ret){
+                    if (ret.status){
+                        console.log("ret.status  : "+ret.status)
+                        $('#feeddataGrid').bootstrapTable('refresh',null);
+                        layer.msg(ret.msg, {icon: 1});
+                        $table.bootstrapTable('remove', {
+                            field: id,
+                            values: [rowid]
+                        });
+                    } else {
+                        layer.msg(ret.msg, {icon: 2});
+                    }
+
+                });
+            });
+        }
+    });
+
+
+    function getCourseType   (value,row,index) {
+        let type=row.courseType;
+        if(type==1){
+            return "必学课程";
+        }else  if(type==2){
+            return "知识学习";
+        }else{
+            return "经验分享";
+        }
+
+    }
+
+    function getPicPath(value,row,index){
+        //debugger;
+        var val=row.path;
+        console.log("val :"+ val);
+        if(val){
+        var img ='';
+        vals=val.split(";");
+        if(vals){
+            for(var i=0;i<vals.length;i++){
+                var val=vals[i];
+                if(val&&val!=''){
+                    img +="<img src="+val+" width='100' height='100'/>"
+                }
+            }
+        }
+        return  img;
+        }else{
+            return val;
+        }
+    }
+    function operateFormatter(value, row, index) {
+       // if(row.reply == null || row.reply ==""){
+        return [
+            '<a href="'+basePath+'/api/courseFeedback/detail?id='+row.id+'" >',
+            '<i class="glyphicon glyphicon-edit"></i>详情',
+            '</a>  ',
+           /* '<a href="/api/courseFeedback/from?id='+row.id+'&courseId=" '+row.course_id+' >',*/
+            '<a href="'+basePath+'/api/courseFeedback/from?id='+row.id+'">',
+             '<i class="glyphicon glyphicon-edit"></i>回复',
+             '</a>  ',
+            '<a class="remove" href="javascript:void(0);">',
+            '<i class="glyphicon glyphicon-remove"></i>删除',
+            '</a>'
+        ].join('');
+       // }
+      /*  else{
+            return [
+                 '<a href="/api/courseFeedback/detail?id='+row.id+'" >',
+                '<i class="glyphicon glyphicon-edit"></i>详情',
+                '</a>  ',
+                 '<a href="/api/courseFeedback/update?id='+row.id+'">',
+                '<i class="glyphicon glyphicon-edit"></i>编辑',
+                '</a>  '
+            ].join('')
+        }*/
+    }
+
+    window.operateEvents = {
+        'click .remove' : function (e, value, row, index) {
+            operaModel.delRow(row.id, basePath+'/api/courseFeedback/delete', 'id');
+        }
+    };
+</script>
+</body>
+
+</html>

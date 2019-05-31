@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:c="http://www.w3.org/1999/XSL/Transform">
+<head th:include="header">
+</head>
+<body>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title" th:text="'经验分享'+${#strings.isEmpty(experienceShare.id)?'添加':'修改'}"></h3>
+                </div>
+                <div class="box-body">
+                    <form class="form-horizontal js-ajax-form" th:attr="action=@{/api/experienceShare/save}" method="post" id="subForm" enctype="multipart/form-data">
+                        <input type="hidden" name="id" id="id" th:value="${experienceShare.id}" />
+                        <div class="form-group">
+                            <label for="type" class="col-sm-2 control-label">类型</label>
+                            <div class="col-sm-10">
+                                <select name="type" class="form-control" id="type">
+                                    <option th:selected="${#strings.equals(experienceShare.type, 1)}" value="1">政府部门</option>
+                                    <option th:selected="${#strings.equals(experienceShare.type, 2)}" value="2">医疗机构</option>
+                                    <option th:selected="${#strings.equals(experienceShare.type, 3)}" value="3">居民经验</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="photoES" class="col-sm-2 control-label">图片</label>
+                            <div class="col-sm-10">
+                                <img th:class="${#strings.isEmpty(experienceShare.photo)?'hidden':''}" id="photoUrl" th:src="${experienceShare.photo}" style="margin-top:10px;display: block;height: 150px;width: 300px;">
+                                <input type="file" name="photoES" id="photoES" th:required="${#strings.isEmpty(experienceShare.photo)?true:false}"/>
+                            </div>
+                            <div style="margin-left: 120px;margin-top: 30px;color: red;">尺寸：240*124</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="title" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" maxlength="20" name="title" class="form-control" id="title" required="true" th:value="${experienceShare.title}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hospital" class="col-sm-2 control-label">医院</label>
+                            <div class="col-sm-10">
+                                <input type="text" maxlength="20" name="hospital" class="form-control" id="hospital" required="true" th:value="${experienceShare.hospital}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="file" class="col-sm-2 control-label">文件</label>
+                            <div class="col-sm-10">
+                                    <video th:src="${experienceShare.filePath}" th:class="${#strings.isEmpty(experienceShare.filePath)?'hidden':''}" controls="controls" width='500px' height='300px' id="vid" autoplay>
+                                    </video>
+                                <input type="file" name="file" id="file" th:required="${#strings.isEmpty(experienceShare.filePath)?true:false}" th:value="${experienceShare.filePath}" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="tempDiv">
+                            <label for="fileName" class="col-sm-2 control-label">原文件名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="fileName" class="form-control" id="fileName" readonly="true" th:value="${experienceShare.fileName}" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="introduce" class="col-sm-2 control-label">介绍</label>
+                            <div class="col-sm-10">
+                                <textarea name="introduce" class="form-control" id="introduce" th:text="${experienceShare.introduce}" maxlength="255" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <div class="col-sm-offset-2 col-sm-4 pull-left">
+                                    <input type="hidden" id="fileType" th:value="${experienceShare.fileType}">
+                                    <button type="submit" onclick="submitForm();" class="btn btn-default js-ajax-submit">提交</button>
+                                </div>
+                                <div class="col-sm-offset-2 col-sm-4 pull-right">
+                                    <button type="button" onClick="javascript :history.back(1);" class="btn btn-default js-ajax-submit">返回</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div th:include="footer"></div>
+</body>
+</html>
+<script>
+    $(function(){
+        var fileType = $("#fileType").val();
+        if(null != fileType && fileType == 2){
+            $("#vid").hide();
+        }
+        var fileName = $("#fileName").val();
+        if(null == fileName || "" == fileName){
+            $("#tempDiv").hide();
+        }
+    });
+
+    $("#photoES").change(function(){
+        var photo = document.getElementById("photoES");
+        var i = photo.value.lastIndexOf('.');
+        var len = photo.value.length;
+        var extEndName = photo.value.substring(i + 1, len);
+        var extName = "GIF,BMP,PNG,JPG,JPEG";
+        if(extName.indexOf(extEndName.toUpperCase()) == -1){
+            layer.msg("您只能上传"+extName+"格式的文件");
+            return false;
+        }
+    });
+
+    $("#file").change(function(){
+        var photo = document.getElementById("file");
+        var i = photo.value.lastIndexOf('.');
+        var len = photo.value.length;
+        var extName = "MP4,PDF";
+        var extEndName = photo.value.substring(i + 1, len);
+        if(extName.indexOf(extEndName.toUpperCase()) == -1){
+            layer.msg("请上传pdf或视频");
+            return false;
+        }
+    });
+</script>
