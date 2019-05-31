@@ -35,7 +35,7 @@ public interface CourseOutlineMapper extends  Repositor<CourseOutline, Integer>,
     public Page<CourseOutline> findCourseOutlinePage1(Specification<CourseOutline> spec, Pageable pageable);
 
     @Query(value="select co.*,c.title from tb_course_outline co left join tb_course c on co.course_id = c.id",countQuery = "select count(1) from tb_course_outline co left join tb_course c on co.course_id = c.id",nativeQuery = true)
-    public Page<List<Map<String, CourseOutline>>> findCourseOutlinePage(Specification<CourseOutline> spec, org.springframework.data.domain.Pageable pageable);
+    public Page<List<Map<String, CourseOutline>>> findCourseOutlinePage(Specification<CourseOutline> spec, Pageable pageable);
 
     @Query("from CourseOutline c where c.id = :id")
     public CourseOutline queryById(@Param(value = "id") Integer id);
