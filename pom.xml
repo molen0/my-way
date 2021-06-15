@@ -27,7 +27,7 @@
 		<pagehelper.version>4.1.1</pagehelper.version>
 		<fastjson.version>1.2.5</fastjson.version>
 		<json.version>20160810</json.version>
-		<pdfbox.version>2.0.1</pdfbox.version>
+		<pdfbox.version>2.0.24</pdfbox.version>
 		<itext.version>2.1.7</itext.version>
 	</properties>
 
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.24</version>
 		</dependency>
 		<!-- httpClient HTTP客户端 -->
 		<dependency>
